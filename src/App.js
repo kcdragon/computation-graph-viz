@@ -10,6 +10,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const filename = "equation_x1x2_sin_x2_graph.json"
+
+    function transform(d) {
+      return "translate(" + d.x + "," + d.y + ")";
+    }
+
     const margin = { top: 100, right: 100, bottom: 100, left: 100 }
     const width = 800 - margin.left - margin.right;
     const height = 800 - margin.top - margin.bottom;
@@ -21,8 +27,7 @@ class App extends React.Component {
       .append("g")
       .attr("transform",
         `translate(${margin.left}, ${margin.top})`);
-    
-    const filename = "data_network.json"
+
     d3.json(filename).then( function( data) {
 
       // Initialize the links
@@ -39,6 +44,13 @@ class App extends React.Component {
         .join("circle")
         .attr("r", 20)
         .style("fill", "#69b3a2")
+
+      const text = svg
+        .selectAll("text")
+        .data(data.nodes)
+        .enter()
+        .append("text")
+        .text(function(d) { return d.name; });
 
       // Let's list the force we wanna apply on the network
       const simulation = d3.forceSimulation(data.nodes)                 // Force algorithm is applied to data.nodes
@@ -58,9 +70,8 @@ class App extends React.Component {
           .attr("x2", function(d) { return d.target.x; })
           .attr("y2", function(d) { return d.target.y; });
 
-        node
-          .attr("cx", function (d) { return d.x+6; })
-          .attr("cy", function(d) { return d.y-6; });
+        node.attr("transform", transform);
+        text.attr("transform", transform);
       }
 
     });
@@ -69,8 +80,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <div ref={this.myReference}>
-        </div>
+        <div ref={this.myReference} />
       </div>
     );
   }
