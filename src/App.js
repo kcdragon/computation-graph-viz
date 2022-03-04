@@ -126,10 +126,28 @@ class App extends React.Component {
     return (
       <svg width={width} height={height}>
         <rect width={width} height={height} stroke="red" fill="#FFF" />
-        <MarkerArrow id="marker-arrow" fill="#333" refX={2} size={6} />
+        <MarkerArrow id="marker-arrow-mid" fill="#333" refX={2} size={6} />
+        <MarkerArrow id="marker-arrow-end" fill="#333" size={6} />
         <Group top={0} left={0}>
           <>
-            {dag.links().map((link) => (
+            {dag.links().map((link) => {
+              const points = link.points
+              if (points.length == 2) {
+                const start = points[0];
+                const end = points[1];
+
+                // https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
+                const length = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2))
+                const v = [(end.x - start.x), (end.y - start.y)]
+                const u = [v[0] / length, v[1] / length]
+                const newLastPoint = {
+                  x: end.x - 10 * u[0],
+                  y: end.y - 10 * u[1],
+                }
+                points[points.length - 1] = newLastPoint
+              }
+
+              return (
               <LinePath
                 key={`${link.source.id}-${link.target.id}`}
                 curve={curveCatmullRom}
@@ -138,9 +156,10 @@ class App extends React.Component {
                 y={(d) => d.y}
                 stroke="#333"
                 strokeWidth={2}
-                markerMid="url(#marker-arrow)"
-              />
-            ))}
+                markerMid="url(#marker-arrow-mid)"
+                markerEnd="url(#marker-arrow-end)"
+              />);
+            })}
           </>
           <>
             {dag.descendants().map((d) => {
