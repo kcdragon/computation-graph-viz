@@ -14,95 +14,28 @@ import { MarkerArrow } from "@visx/marker";
 const data = [
   {
     id: "0",
-    parentIds: ["8"],
-    color: "blue"
+    label: "x2",
   },
   {
     id: "1",
-    parentIds: []
+    label: "x1",
   },
   {
     id: "2",
-    parentIds: []
+    label: "sin()",
+    parentIds: ["0"],
   },
   {
     id: "3",
-    parentIds: ["11"]
+    label: "*",
+    parentIds: ["0", "1"],
   },
   {
     id: "4",
-    parentIds: ["12"]
+    label: "+",
+    parentIds: ["2", "3"],
   },
-  {
-    id: "5",
-    parentIds: ["18"]
-  },
-  {
-    id: "6",
-    parentIds: ["9", "15", "17"]
-  },
-  {
-    id: "7",
-    parentIds: ["3", "17", "20", "21"]
-  },
-  {
-    id: "8",
-    parentIds: []
-  },
-  {
-    id: "9",
-    parentIds: ["4"],
-    color: "green"
-  },
-  {
-    id: "10",
-    parentIds: ["16", "21"]
-  },
-  {
-    id: "11",
-    parentIds: ["2"]
-  },
-  {
-    id: "12",
-    parentIds: ["21"]
-  },
-  {
-    id: "13",
-    parentIds: ["4", "12"]
-  },
-  {
-    id: "14",
-    parentIds: ["1", "8"]
-  },
-  {
-    id: "15",
-    parentIds: []
-  },
-  {
-    id: "16",
-    parentIds: ["0"]
-  },
-  {
-    id: "17",
-    parentIds: ["19"]
-  },
-  {
-    id: "18",
-    parentIds: ["9"]
-  },
-  {
-    id: "19",
-    parentIds: []
-  },
-  {
-    id: "20",
-    parentIds: ["13"]
-  },
-  {
-    id: "21",
-    parentIds: []
-  }
-];
+]
 
 const d3 = Object.assign({}, d3Base, d3Dag);
 const width = 800;
@@ -114,9 +47,6 @@ const layout = d3
   .size([width, height])
   .decross(d3.decrossTwoLayer())
   .coord(d3.coordGreedy())
-  // .layering(d3.layeringLongestPath())
-  // .decross(d3.decrossOpt())
-  // .coord(d3.coordVert())
   .nodeSize(() => [20, 20]);
 
 const dag = layout(d).dag;
@@ -152,8 +82,8 @@ class App extends React.Component {
                 key={`${link.source.id}-${link.target.id}`}
                 curve={curveCatmullRom}
                 data={link.points}
-                x={(d) => d.x}
-                y={(d) => d.y}
+                x={(d) => width - d.x}
+                y={(d) => height - d.y}
                 stroke="#333"
                 strokeWidth={2}
                 markerMid="url(#marker-arrow-mid)"
@@ -163,21 +93,22 @@ class App extends React.Component {
           </>
           <>
             {dag.descendants().map((d) => {
-              console.log("d", d);
+              console.log("d.data", d.data);
               return (
                 <Group key={d.id}>
                   <Circle
                     key={d.id}
-                    cx={d.x}
-                    cy={d.y}
+                    cx={width - d.x}
+                    cy={height - d.y}
                     r={20}
                     fill={d.data.color || "red"}
                   />
                   <Text
-                    x={d.x}
-                    y={d.y}
-                    textAnchor="middle">
-                    {d.id}
+                    x={width - d.x}
+                    y={height - d.y}
+                    textAnchor="middle"
+                    fill="white">
+                    {d.data.label || d.id}
                   </Text>
                 </Group>
               );
