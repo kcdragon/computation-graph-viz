@@ -175,7 +175,8 @@ class App extends React.Component {
                   />
                   <Text
                     x={d.x}
-                    y={d.y}>
+                    y={d.y}
+                    textAnchor="middle">
                     {d.id}
                   </Text>
                 </Group>
