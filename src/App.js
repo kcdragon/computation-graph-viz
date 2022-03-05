@@ -7,9 +7,7 @@ import { Text } from "@visx/text";
 import { curveCatmullRom } from "@visx/curve";
 import { MarkerArrow } from "@visx/marker";
 
-// serialize to parent ids
-// collapse node - remove node, add connections between all adjacent nodes
-// collapsing may lead to cycles - how to handle it?
+const d3 = Object.assign({}, d3Base, d3Dag);
 
 const data = [
   {
@@ -35,32 +33,36 @@ const data = [
     label: "+",
     parentIds: ["2", "3"],
   },
-]
+];
 
-const d3 = Object.assign({}, d3Base, d3Dag);
-const width = 800;
-const height = 800;
+class ComputationGraph extends React.Component {
+  static defaultProps = {
+    width: 600,
+    height: 600,
+  }
 
-const d = d3Dag.dagStratify()(data);
-const layout = d3
-  .sugiyama()
-  .size([width, height])
-  .decross(d3.decrossTwoLayer())
-  .coord(d3.coordGreedy())
-  .nodeSize(() => [20, 20]);
+  constructor(props) {
+    super(props);
 
-const dag = layout(d).dag;
+    const d = d3.dagStratify()(this.props.data);
+    const layout = d3
+        .sugiyama()
+        .size([this.props.width, this.props.height])
+        .decross(d3.decrossTwoLayer())
+        .coord(d3.coordGreedy())
+        .nodeSize(() => [20, 20]);
+    this.dag = layout(d).dag;
+  }
 
-class App extends React.Component {
   render() {
     return (
-      <svg width={width} height={height}>
-        <rect width={width} height={height} stroke="red" fill="#FFF" />
+      <svg width={this.props.width} height={this.props.height}>
+        <rect width={this.props.width} height={this.props.height} stroke="red" fill="#FFF" />
         <MarkerArrow id="marker-arrow-mid" fill="#333" refX={2} size={6} />
         <MarkerArrow id="marker-arrow-end" fill="#333" size={6} />
         <Group top={0} left={0}>
           <>
-            {dag.links().map((link) => {
+            {this.dag.links().map((link) => {
               const points = link.points
               if (points.length == 2) {
                 const start = points[0];
@@ -82,8 +84,8 @@ class App extends React.Component {
                 key={`${link.source.id}-${link.target.id}`}
                 curve={curveCatmullRom}
                 data={link.points}
-                x={(d) => width - d.x}
-                y={(d) => height - d.y}
+                x={(d) => this.props.width - d.x}
+                y={(d) => this.props.height - d.y}
                 stroke="#333"
                 strokeWidth={2}
                 markerMid="url(#marker-arrow-mid)"
@@ -92,20 +94,19 @@ class App extends React.Component {
             })}
           </>
           <>
-            {dag.descendants().map((d) => {
-              console.log("d.data", d.data);
+            {this.dag.descendants().map((d) => {
               return (
                 <Group key={d.id}>
                   <Circle
                     key={d.id}
-                    cx={width - d.x}
-                    cy={height - d.y}
+                    cx={this.props.width - d.x}
+                    cy={this.props.height - d.y}
                     r={20}
                     fill={d.data.color || "red"}
                   />
                   <Text
-                    x={width - d.x}
-                    y={height - d.y}
+                    x={this.props.width - d.x}
+                    y={this.props.height - d.y}
                     textAnchor="middle"
                     fill="white">
                     {d.data.label || d.id}
@@ -116,6 +117,14 @@ class App extends React.Component {
           </>
         </Group>
       </svg>
+    );
+  }
+}
+
+class App extends React.Component {
+  render() {
+    return (
+      <ComputationGraph data={data} />
     );
   }
 }
