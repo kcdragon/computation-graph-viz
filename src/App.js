@@ -7,7 +7,6 @@ import { curveCatmullRom } from "@visx/curve";
 import { Group } from "@visx/group";
 import { MarkerArrow } from "@visx/marker";
 import { LinePath, Circle } from "@visx/shape";
-import { Text } from "@visx/text";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -16,15 +15,15 @@ const d3 = Object.assign({}, d3Base, d3Dag);
 const data = [
   {
     id: "0",
-    label: "x2",
+    label: "x_2",
   },
   {
     id: "1",
-    label: "x1",
+    label: "x_1",
   },
   {
     id: "2",
-    label: "sin()",
+    label: "sin",
     parentIds: ["0"],
   },
   {
@@ -54,7 +53,7 @@ class ComputationGraph extends React.Component {
         .size([this.props.width, this.props.height])
         .decross(d3.decrossTwoLayer())
         .coord(d3.coordGreedy())
-        .nodeSize(() => [20, 20]);
+        .nodeSize(() => [30, 30]);
     this.dag = layout(d).dag;
   }
 
@@ -99,6 +98,7 @@ class ComputationGraph extends React.Component {
           </>
           <>
             {this.dag.descendants().map((d) => {
+              let label = d.data.label || d.id;
               return (
                 <Group key={d.id}>
                   <Circle
@@ -106,15 +106,19 @@ class ComputationGraph extends React.Component {
                     cx={this.props.width - d.x}
                     cy={this.props.height - d.y}
                     r={20}
-                    fill={d.data.color || "red"}
+                    stroke="black"
+                    fill="white"
                   />
-                  <Text
-                    x={this.props.width - d.x}
-                    y={this.props.height - d.y}
-                    textAnchor="middle"
-                    fill="white">
-                    {d.data.label || d.id}
-                  </Text>
+                  <foreignObject
+                    x={this.props.width - d.x - 10}
+                    y={this.props.height - d.y - 10}
+                    width="100"
+                    height="100"
+                    textAnchor="middle">
+                    <MathJaxContext>
+                      <MathJax>{"\\(" + label + "\\)"}</MathJax>
+                    </MathJaxContext>
+                  </foreignObject>
                 </Group>
               );
             })}
