@@ -1,11 +1,15 @@
-import React from 'react';
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 import * as d3Base from "d3";
 import * as d3Dag from "d3-dag";
+import React from 'react';
+import { Col, Container, Row } from "react-bootstrap";
+import { curveCatmullRom } from "@visx/curve";
 import { Group } from "@visx/group";
+import { MarkerArrow } from "@visx/marker";
 import { LinePath, Circle } from "@visx/shape";
 import { Text } from "@visx/text";
-import { curveCatmullRom } from "@visx/curve";
-import { MarkerArrow } from "@visx/marker";
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const d3 = Object.assign({}, d3Base, d3Dag);
 
@@ -124,7 +128,19 @@ class ComputationGraph extends React.Component {
 class App extends React.Component {
   render() {
     return (
-      <ComputationGraph data={data} />
+      <Container>
+        <Row>
+          <Col>
+            <ComputationGraph data={data} />
+          </Col>
+          <Col>
+            <MathJaxContext>
+              <h2>Backpropagation</h2>
+              <MathJax>{"\\(\\frac{10}{4x} \\approx 2^{12}\\)"}</MathJax>
+            </MathJaxContext>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
