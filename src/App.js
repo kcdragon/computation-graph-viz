@@ -60,7 +60,7 @@ class ComputationGraph extends React.Component {
   render() {
     return (
       <svg width={this.props.width} height={this.props.height}>
-        <rect width={this.props.width} height={this.props.height} stroke="red" fill="#FFF" />
+        <rect width={this.props.width} height={this.props.height} fill="#FFF" />
         <MarkerArrow id="marker-arrow-mid" fill="#333" refX={2} size={6} />
         <MarkerArrow id="marker-arrow-end" fill="#333" size={6} />
         <Group top={0} left={0}>
@@ -135,12 +135,20 @@ class App extends React.Component {
       <Container>
         <Row>
           <Col>
+            <h2>Equation</h2>
+            <MathJaxContext>
+              <MathJax>{"\\( f(x_1, x_2) = x_1 x_2 + sin(x_2) \\)"}</MathJax>
+            </MathJaxContext>
+          </Col>
+          <Col>
+            <h2>Computation Graph</h2>
             <ComputationGraph data={data} />
           </Col>
           <Col>
+            <h2>Backpropagation</h2>
             <MathJaxContext>
-              <h2>Backpropagation</h2>
-              <MathJax>{"\\(\\frac{10}{4x} \\approx 2^{12}\\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_3} = 1 \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial a_3}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial (a_1 + a_2)}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} 1 =\\frac{\\partial f}{\\partial a_3}  \\)"}</MathJax>
             </MathJaxContext>
           </Col>
         </Row>
