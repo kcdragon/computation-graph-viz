@@ -6,7 +6,7 @@ import {Col, Container, Row} from "react-bootstrap";
 import {curveCatmullRom} from "@visx/curve";
 import {Group} from "@visx/group";
 import {MarkerArrow} from "@visx/marker";
-import {Circle, LinePath} from "@visx/shape";
+import {LinePath} from "@visx/shape";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -23,17 +23,17 @@ const data = [
   },
   {
     id: "2",
-    label: "sin",
+    label: "a_1 = sin(x_2)",
     parentIds: ["0"],
   },
   {
     id: "3",
-    label: "*",
+    label: "a_2 = x_1 x_2",
     parentIds: ["0", "1"],
   },
   {
     id: "4",
-    label: "+",
+    label: "a_3 = a_1 + a_2",
     parentIds: ["2", "3"],
   },
 ];
@@ -101,23 +101,25 @@ class ComputationGraph extends React.Component {
               let label = d.data.label || d.id;
               return (
                 <Group key={d.id}>
-                  <Circle
-                    key={d.id}
+                  <ellipse
                     cx={this.props.width - d.x}
                     cy={this.props.height - d.y}
-                    r={20}
+                    rx={60}
+                    ry={20}
                     stroke="black"
                     fill="white"
                   />
+
                   <foreignObject
-                    x={this.props.width - d.x - 10}
-                    y={this.props.height - d.y - 10}
+                    x={this.props.width - d.x - 50}
+                    y={this.props.height - d.y - 15}
                     width="100"
-                    height="100"
-                    textAnchor="middle">
-                    <MathJaxContext>
-                      <MathJax>{"\\(" + label + "\\)"}</MathJax>
-                    </MathJaxContext>
+                    height="100">
+                    <div style={{textAlign: "center"}}>
+                      <MathJaxContext>
+                        <MathJax>{"\\(" + label + "\\)"}</MathJax>
+                      </MathJaxContext>
+                    </div>
                   </foreignObject>
                 </Group>
               );
