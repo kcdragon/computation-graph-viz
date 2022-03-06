@@ -157,10 +157,10 @@ class Backpropagation extends React.Component {
 
       const leftSide = this.constructLatexFormattedDerivativeString("f", node);
       const rightSide = this.props.graph[node].children.map(child => {
-        return this.constructLatexFormattedDerivativeString("f", child) + " " + this.constructLatexFormattedDerivativeString(child, node);
-      }).join(" + ");
+        return this.constructLatexFormattedDerivativeString("f", child) + "\\( \\times \\)" + this.constructLatexFormattedDerivativeString(child, node);
+      }).join("\\( + \\)");
 
-      backpropEquations.push([leftSide, rightSide].filter(s => s != "").join(" = "));
+      backpropEquations.push([leftSide, rightSide].filter(s => s != "").join("\\( = \\)"));
 
       let newNodesToExplore = graph[node].parents.filter(n => !visited.has(n) && !needToVisit.includes(n));
       needToVisit.push(...newNodesToExplore);
@@ -174,10 +174,10 @@ class Backpropagation extends React.Component {
             <h3>Hardcoded</h3>
             <MathJaxContext>
               <MathJax>{"\\( \\frac{\\partial f}{\\partial a_3} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial a_3}{\\partial a_1} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_2} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial a_3}{\\partial a_2} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_2} = \\frac{\\partial f}{\\partial a_1} \\frac{\\partial a_1}{\\partial x_2} + \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial x_2} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_1} = \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial x_1} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\times \\frac{\\partial a_3}{\\partial a_1} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_2} = \\frac{\\partial f}{\\partial a_3} \\times \\frac{\\partial a_3}{\\partial a_2} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_2} = \\frac{\\partial f}{\\partial a_1} \\times \\frac{\\partial a_1}{\\partial x_2} + \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial x_2} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_1} = \\frac{\\partial f}{\\partial a_2} \\times \\frac{\\partial a_2}{\\partial x_1} \\)"}</MathJax>
             </MathJaxContext>
           </Col>
           <Col>
