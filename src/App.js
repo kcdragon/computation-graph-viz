@@ -1,12 +1,12 @@
-import { MathJax, MathJaxContext } from "better-react-mathjax";
+import {MathJax, MathJaxContext} from "better-react-mathjax";
 import * as d3Base from "d3";
 import * as d3Dag from "d3-dag";
 import React from 'react';
-import { Col, Container, Row } from "react-bootstrap";
-import { curveCatmullRom } from "@visx/curve";
-import { Group } from "@visx/group";
-import { MarkerArrow } from "@visx/marker";
-import { LinePath, Circle } from "@visx/shape";
+import {Col, Container, Row} from "react-bootstrap";
+import {curveCatmullRom} from "@visx/curve";
+import {Group} from "@visx/group";
+import {MarkerArrow} from "@visx/marker";
+import {Circle, LinePath} from "@visx/shape";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -67,7 +67,7 @@ class ComputationGraph extends React.Component {
           <>
             {this.dag.links().map((link) => {
               const points = link.points
-              if (points.length == 2) {
+              if (points.length === 2) {
                 const start = points[0];
                 const end = points[1];
 
