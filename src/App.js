@@ -40,32 +40,6 @@ const graph = {
   },
 };
 
-const data = [
-  {
-    id: "0",
-    label: "x_2",
-  },
-  {
-    id: "1",
-    label: "x_1",
-  },
-  {
-    id: "2",
-    label: "a_1 = sin(x_2)",
-    parentIds: ["0"],
-  },
-  {
-    id: "3",
-    label: "a_2 = x_1 x_2",
-    parentIds: ["0", "1"],
-  },
-  {
-    id: "4",
-    label: "a_3 = a_1 + a_2",
-    parentIds: ["2", "3"],
-  },
-];
-
 class ComputationGraph extends React.Component {
   static defaultProps = {
     width: 600,
@@ -75,7 +49,7 @@ class ComputationGraph extends React.Component {
   constructor(props) {
     super(props);
 
-    const d = d3.dagStratify()(this.props.data);
+    const d = d3.dagStratify()(this.buildD3DagData(this.props.graph));
     const layout = d3
         .sugiyama()
         .size([this.props.width, this.props.height])
@@ -157,6 +131,18 @@ class ComputationGraph extends React.Component {
       </svg>
     );
   }
+
+  buildD3DagData(graph) {
+    const data = [];
+    for (const [key, value] of Object.entries(graph)) {
+      const node = {};
+      node.id = key;
+      node.label = [key, value.equation].filter(e => e != "").join(" = ");
+      node.parentIds = value.parents;
+      data.push(node);
+    }
+    return data;
+  }
 }
 
 class Backpropagation extends React.Component {
@@ -223,7 +209,7 @@ class App extends React.Component {
           </Col>
           <Col md={5}>
             <h2>Computation Graph</h2>
-            <ComputationGraph data={data} />
+            <ComputationGraph graph={graph} />
           </Col>
           <Col md={5}>
             <h2>Backpropagation</h2>
