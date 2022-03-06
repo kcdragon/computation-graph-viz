@@ -149,8 +149,11 @@ class App extends React.Component {
           <Col>
             <h2>Backpropagation</h2>
             <MathJaxContext>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_3} = 1 \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial a_3}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial (a_1 + a_2)}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} 1 =\\frac{\\partial f}{\\partial a_3}  \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_3} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial a_3}{\\partial a_1} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_2} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial a_3}{\\partial a_2} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_2} = \\frac{\\partial f}{\\partial a_1} \\frac{\\partial a_1}{\\partial x_2} + \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial x_2} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_1} = \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial a_1} \\)"}</MathJax>
             </MathJaxContext>
           </Col>
         </Row>
