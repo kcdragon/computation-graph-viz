@@ -161,8 +161,6 @@ class ComputationGraph extends React.Component {
 
 class Backpropagation extends React.Component {
   render() {
-    console.log("graph", this.props.graph)
-
     const backpropEquations = []
     const needToVisit = []
     const visited = new Set()
@@ -171,20 +169,12 @@ class Backpropagation extends React.Component {
     while (node != null) {
       visited.add(node);
 
-      if (node === this.props.sink) {
-        backpropEquations.push(this.constructLatexFormattedDerivativeString("f", node));
-      } else {
-        const leftSide = this.constructLatexFormattedDerivativeString("f", node);
-        let rightSide;
-        let children = this.props.graph[node].children;
-        if (children.length == 1) {
-          rightSide = this.constructLatexFormattedDerivativeString("f", children[0]) + " " + this.constructLatexFormattedDerivativeString(children[0], node);
-        } else {
-          // TODO handle nodes with multiple children. this will result in chain rules equations summed together
-          rightSide = "";
-        }
-        backpropEquations.push(leftSide + " = " + rightSide);
-      }
+      const leftSide = this.constructLatexFormattedDerivativeString("f", node);
+      const rightSide = this.props.graph[node].children.map(child => {
+        return this.constructLatexFormattedDerivativeString("f", child) + " " + this.constructLatexFormattedDerivativeString(child, node);
+      }).join(" + ");
+
+      backpropEquations.push([leftSide, rightSide].filter(s => s != "").join(" = "));
 
       let newNodesToExplore = graph[node].parents.filter(n => !visited.has(n) && !needToVisit.includes(n));
       needToVisit.push(...newNodesToExplore);
@@ -207,7 +197,7 @@ class Backpropagation extends React.Component {
           <Col>
             <h3>Calculated</h3>
             <MathJaxContext>
-              {backpropEquations.map(e => <MathJax>{e}</MathJax>)}
+              {backpropEquations.map((equation, index) => <MathJax key={index}>{equation}</MathJax>)}
             </MathJaxContext>
           </Col>
         </Row>
