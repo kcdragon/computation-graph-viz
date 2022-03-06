@@ -12,6 +12,34 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const d3 = Object.assign({}, d3Base, d3Dag);
 
+const graph = {
+  x_1: {
+    equation: "",
+    parents: [],
+    children: ["a_2"],
+  },
+  x_2: {
+    equation: "",
+    parents: [],
+    children: ["a_1", "a_2"],
+  },
+  a_1: {
+    equation: "sin(x_2)",
+    parents: ["x_2"],
+    children: ["a_3"],
+  },
+  a_2: {
+    equation: "x_1 x_2",
+    parents: ["x_1", "x_2"],
+    children: ["a_3"],
+  },
+  a_3: {
+    equation: "a_1 + a_ 2",
+    parents: ["a_1", "a_2"],
+    children: [],
+  },
+};
+
 const data = [
   {
     id: "0",
@@ -131,30 +159,85 @@ class ComputationGraph extends React.Component {
   }
 }
 
-class App extends React.Component {
+class Backpropagation extends React.Component {
   render() {
+    console.log("graph", this.props.graph)
+
+    const backpropEquations = []
+    const needToVisit = []
+    const visited = new Set()
+
+    let node = this.props.sink;
+    while (node != null) {
+      visited.add(node);
+
+      if (node === this.props.sink) {
+        backpropEquations.push(this.constructLatexFormattedDerivativeString("f", node));
+      } else {
+        const leftSide = this.constructLatexFormattedDerivativeString("f", node);
+        let rightSide;
+        let children = this.props.graph[node].children;
+        if (children.length == 1) {
+          rightSide = this.constructLatexFormattedDerivativeString("f", children[0]) + " " + this.constructLatexFormattedDerivativeString(children[0], node);
+        } else {
+          // TODO handle nodes with multiple children. this will result in chain rules equations summed together
+          rightSide = "";
+        }
+        backpropEquations.push(leftSide + " = " + rightSide);
+      }
+
+      let newNodesToExplore = graph[node].parents.filter(n => !visited.has(n) && !needToVisit.includes(n));
+      needToVisit.push(...newNodesToExplore);
+      node = needToVisit.shift();
+    }
+
     return (
       <Container>
         <Row>
           <Col>
-            <h2>Equation</h2>
-            <MathJaxContext>
-              <MathJax>{"\\( f(x_1, x_2) = x_1 x_2 + sin(x_2) \\)"}</MathJax>
-            </MathJaxContext>
-          </Col>
-          <Col>
-            <h2>Computation Graph</h2>
-            <ComputationGraph data={data} />
-          </Col>
-          <Col>
-            <h2>Backpropagation</h2>
+            <h3>Hardcoded</h3>
             <MathJaxContext>
               <MathJax>{"\\( \\frac{\\partial f}{\\partial a_3} \\)"}</MathJax>
               <MathJax>{"\\( \\frac{\\partial f}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial a_3}{\\partial a_1} \\)"}</MathJax>
               <MathJax>{"\\( \\frac{\\partial f}{\\partial a_2} = \\frac{\\partial f}{\\partial a_3} \\frac{\\partial a_3}{\\partial a_2} \\)"}</MathJax>
               <MathJax>{"\\( \\frac{\\partial f}{\\partial x_2} = \\frac{\\partial f}{\\partial a_1} \\frac{\\partial a_1}{\\partial x_2} + \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial x_2} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_1} = \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial a_1} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_1} = \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial x_1} \\)"}</MathJax>
             </MathJaxContext>
+          </Col>
+          <Col>
+            <h3>Calculated</h3>
+            <MathJaxContext>
+              {backpropEquations.map(e => <MathJax>{e}</MathJax>)}
+            </MathJaxContext>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
+  constructLatexFormattedDerivativeString(top, bottom) {
+    return "\\( \\frac{\\partial " + top + "}{\\partial " + bottom + "} \\)";
+  }
+}
+
+class App extends React.Component {
+  render() {
+    return (
+      <Container>
+        <Row>
+          <Col md={2}>
+            <h2>Equation</h2>
+            <MathJaxContext>
+              <MathJax>{"\\( f(x_1, x_2) = x_1 x_2 + sin(x_2) \\)"}</MathJax>
+            </MathJaxContext>
+          </Col>
+          <Col md={5}>
+            <h2>Computation Graph</h2>
+            <ComputationGraph data={data} />
+          </Col>
+          <Col md={5}>
+            <h2>Backpropagation</h2>
+            <Backpropagation sink={"a_3"} graph={graph} />
           </Col>
         </Row>
       </Container>
