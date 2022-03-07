@@ -9,6 +9,7 @@ import {MarkerArrow} from "@visx/marker";
 import {LinePath} from "@visx/shape";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {derivative} from "mathjs";
 
 const d3 = Object.assign({}, d3Base, d3Dag);
 
@@ -147,6 +148,10 @@ class ComputationGraph extends React.Component {
 
 class Backpropagation extends React.Component {
   render() {
+    console.log(this.props.function);
+    console.log("df/dx_1", derivative(this.props.function, "x_1").toString());
+    console.log("df/dx_2", derivative(this.props.function, "x_2").toString());
+
     const backpropEquations = []
     const needToVisit = []
     const visited = new Set()
@@ -157,6 +162,9 @@ class Backpropagation extends React.Component {
 
       const leftSide = this.constructLatexFormattedDerivativeString("f", node);
       const rightSide = this.props.graph[node].children.map(child => {
+        // TODO use Math.js toTex
+        // TODO equations like df/da_2 can be calculated because we previously calculated it (thats the purpose of backprop!)
+
         return this.constructLatexFormattedDerivativeString("f", child) + "\\( \\times \\)" + this.constructLatexFormattedDerivativeString(child, node);
       }).join("\\( + \\)");
 
@@ -173,11 +181,11 @@ class Backpropagation extends React.Component {
           <Col>
             <h3>Hardcoded</h3>
             <MathJaxContext>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_3} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\times \\frac{\\partial a_3}{\\partial a_1} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_2} = \\frac{\\partial f}{\\partial a_3} \\times \\frac{\\partial a_3}{\\partial a_2} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_2} = \\frac{\\partial f}{\\partial a_1} \\times \\frac{\\partial a_1}{\\partial x_2} + \\frac{\\partial f}{\\partial a_2} \\frac{\\partial a_2}{\\partial x_2} \\)"}</MathJax>
-              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_1} = \\frac{\\partial f}{\\partial a_2} \\times \\frac{\\partial a_2}{\\partial x_1} \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_3} = 1 \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_1} = \\frac{\\partial f}{\\partial a_3} \\times \\frac{\\partial a_3}{\\partial a_1} = 1 \\times 1 \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial a_2} = \\frac{\\partial f}{\\partial a_3} \\times \\frac{\\partial a_3}{\\partial a_2} = 1 \\times 1 \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_2} = \\frac{\\partial f}{\\partial a_1} \\times \\frac{\\partial a_1}{\\partial x_2} + \\frac{\\partial f}{\\partial a_2} \\times \\frac{\\partial a_2}{\\partial x_2} = 1 \\times cos(x_2) + 1 \\times x_1 \\)"}</MathJax>
+              <MathJax>{"\\( \\frac{\\partial f}{\\partial x_1} = \\frac{\\partial f}{\\partial a_2} \\times \\frac{\\partial a_2}{\\partial x_1} = 1 \\times x_2 \\)"}</MathJax>
             </MathJaxContext>
           </Col>
           <Col>
@@ -213,7 +221,7 @@ class App extends React.Component {
           </Col>
           <Col md={5}>
             <h2>Backpropagation</h2>
-            <Backpropagation sink={"a_3"} graph={graph} />
+            <Backpropagation function="x_1 x_2 + sin(x_2)" sink={"a_3"} graph={graph} />
           </Col>
         </Row>
       </Container>
