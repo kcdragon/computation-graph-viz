@@ -9,7 +9,7 @@ import {MarkerArrow} from "@visx/marker";
 import {LinePath} from "@visx/shape";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {derivative} from "mathjs";
+import * as mathjs from "mathjs";
 
 const d3 = Object.assign({}, d3Base, d3Dag);
 
@@ -164,21 +164,25 @@ class Backpropagation extends React.Component {
       const parts = [leftSide];
       if (children.length == 0) {
         derivativesOfFunction[node] = 1;
-        parts.push("\\( 1 \\)");
+        parts.push("1");
       } else {
         const rightSide = children.map(child => {
-          return this.constructLatexFormattedDerivativeString("f", child) + "\\( \\times \\)" + this.constructLatexFormattedDerivativeString(child, node);
-        }).join("\\( + \\)");
+          return this.constructLatexFormattedDerivativeString("f", child) + "*" + this.constructLatexFormattedDerivativeString(child, node);
+        }).join("+");
         parts.push(rightSide);
 
         const derivativeEquation = children.map(child => {
-          return derivativesOfFunction[child] + " \\times " + derivative(this.props.graph[child].equation, node).toString();
-        }).join(" + ");
-        derivativesOfFunction[node] = derivativeEquation;
-        parts.push("\\(" + derivativeEquation + "\\)");
+          return derivativesOfFunction[child] + "*" + mathjs.derivative(this.props.graph[child].equation, node).toString();
+        }).join("+");
+
+        parts.push(derivativeEquation);
+
+        const simplifiedDerivativeEquation = mathjs.simplify(derivativeEquation).toString()
+        parts.push(simplifiedDerivativeEquation);
+        derivativesOfFunction[node] = simplifiedDerivativeEquation;
       }
 
-      backpropEquations.push(parts.filter(s => s != "").join("\\( = \\)"));
+      backpropEquations.push(parts.filter(s => s != "").join("="));
 
       let newNodesToExplore = graph[node].parents.filter(n => !visited.has(n) && !needToVisit.includes(n));
       needToVisit.push(...newNodesToExplore);
@@ -201,7 +205,7 @@ class Backpropagation extends React.Component {
           <Col>
             <h3>Calculated</h3>
             <MathJaxContext>
-              {backpropEquations.map((equation, index) => <MathJax key={index}>{equation}</MathJax>)}
+              {backpropEquations.map((equation, index) => <MathJax key={index}>\({equation}\)</MathJax>)}
             </MathJaxContext>
           </Col>
         </Row>
@@ -210,7 +214,7 @@ class Backpropagation extends React.Component {
   }
 
   constructLatexFormattedDerivativeString(top, bottom) {
-    return "\\( \\frac{\\partial " + top + "}{\\partial " + bottom + "} \\)";
+    return "\\frac{\\partial " + top + "}{\\partial " + bottom + "}";
   }
 }
 
