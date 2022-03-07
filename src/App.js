@@ -35,7 +35,7 @@ const graph = {
     children: ["a_3"],
   },
   a_3: {
-    equation: "a_1 + a_ 2",
+    equation: "a_1 + a_2",
     parents: ["a_1", "a_2"],
     children: [],
   },
@@ -148,27 +148,37 @@ class ComputationGraph extends React.Component {
 
 class Backpropagation extends React.Component {
   render() {
-    console.log(this.props.function);
-    console.log("df/dx_1", derivative(this.props.function, "x_1").toString());
-    console.log("df/dx_2", derivative(this.props.function, "x_2").toString());
-
     const backpropEquations = []
+    const derivativesOfFunction = {}
     const needToVisit = []
     const visited = new Set()
 
     let node = this.props.sink;
     while (node != null) {
+      console.log("node", node)
       visited.add(node);
 
       const leftSide = this.constructLatexFormattedDerivativeString("f", node);
-      const rightSide = this.props.graph[node].children.map(child => {
-        // TODO use Math.js toTex
-        // TODO equations like df/da_2 can be calculated because we previously calculated it (thats the purpose of backprop!)
+      const children = this.props.graph[node].children;
 
-        return this.constructLatexFormattedDerivativeString("f", child) + "\\( \\times \\)" + this.constructLatexFormattedDerivativeString(child, node);
-      }).join("\\( + \\)");
+      const parts = [leftSide];
+      if (children.length == 0) {
+        derivativesOfFunction[node] = 1;
+        parts.push("\\( 1 \\)");
+      } else {
+        const rightSide = children.map(child => {
+          return this.constructLatexFormattedDerivativeString("f", child) + "\\( \\times \\)" + this.constructLatexFormattedDerivativeString(child, node);
+        }).join("\\( + \\)");
+        parts.push(rightSide);
 
-      backpropEquations.push([leftSide, rightSide].filter(s => s != "").join("\\( = \\)"));
+        const derivativeEquation = children.map(child => {
+          return derivativesOfFunction[child] + " \\times " + derivative(this.props.graph[child].equation, node).toString();
+        }).join(" + ");
+        derivativesOfFunction[node] = derivativeEquation;
+        parts.push("\\(" + derivativeEquation + "\\)");
+      }
+
+      backpropEquations.push(parts.filter(s => s != "").join("\\( = \\)"));
 
       let newNodesToExplore = graph[node].parents.filter(n => !visited.has(n) && !needToVisit.includes(n));
       needToVisit.push(...newNodesToExplore);
