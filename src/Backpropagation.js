@@ -30,31 +30,74 @@ class Backpropagation extends React.Component {
     while (node != null) {
       visited.add(node);
 
-      const leftSide = this.constructLatexFormattedDerivativeString("f", node);
+      const derivativeOfFWithRespectToNodeTerm = {
+        text: this.constructLatexFormattedDerivativeString("f", node),
+        isDerivative: true,
+      };
       const children = this.props.graph[node].children;
 
-      const parts = [leftSide];
+      let equalsTerm = {
+        text: "=",
+        isDerivative: false,
+      }
+
+      let additionTerm = {
+        text: "+",
+        isDerivative: false,
+      }
+
+      let multiplicationTerm = {
+        text: "*",
+        isDerivative: false,
+      }
+
+      const terms = [derivativeOfFWithRespectToNodeTerm];
+      terms.push(equalsTerm);
+
       if (children.length == 0) {
         derivativesOfFunction[node] = 1;
-        parts.push("1");
+        terms.push({
+          text: "1",
+          isDerivative: false,
+        });
       } else {
+
         const rightSide = children.map(child => {
-          return this.constructLatexFormattedDerivativeString("f", child) + "*" + this.constructLatexFormattedDerivativeString(child, node);
-        }).join("+");
-        parts.push(rightSide);
+          let derivativeOfFWithRespectToChildTerm = {
+            text: this.constructLatexFormattedDerivativeString("f", child),
+            isDerivative: true,
+          };
+
+          let derivativeOfChildWithRespectToNodeTerm = {
+            text: this.constructLatexFormattedDerivativeString(child, node),
+            isDerivative: true,
+          };
+
+          return [derivativeOfFWithRespectToChildTerm, multiplicationTerm, derivativeOfChildWithRespectToNodeTerm, additionTerm];
+        }).flat();
+        rightSide.pop(); // remove last addition since it isn't needed
+        terms.push(...rightSide);
+        terms.push(equalsTerm);
 
         const derivativeEquation = children.map(child => {
           return derivativesOfFunction[child] + "*" + mathjs.derivative(this.props.graph[child].equation, node).toString();
         }).join("+");
 
-        parts.push(derivativeEquation);
+        terms.push({
+          text: derivativeEquation,
+          isDerivative: false,
+        });
+        terms.push(equalsTerm);
 
         const simplifiedDerivativeEquation = mathjs.simplify(derivativeEquation).toString()
-        parts.push(simplifiedDerivativeEquation);
+        terms.push({
+          text: simplifiedDerivativeEquation,
+          isDerivative: false,
+        });
         derivativesOfFunction[node] = simplifiedDerivativeEquation;
       }
 
-      backpropEquations.push(parts.filter(s => s != "").join("="));
+      backpropEquations.push(terms);
 
       let newNodesToExplore = this.props.graph[node].parents.filter(n => !visited.has(n) && !needToVisit.includes(n));
       needToVisit.push(...newNodesToExplore);
@@ -77,7 +120,14 @@ class Backpropagation extends React.Component {
           <Col>
             <h3>Calculated</h3>
             <MathJaxContext>
-              {backpropEquations.map((equation, index) => <MathJax key={index}>\({equation}\)</MathJax>)}
+              {backpropEquations.map((terms, index) => {
+                return (
+                  <div>
+                    {this.renderBackpropEquation(terms)}
+                    <br />
+                  </div>
+                );
+              })}
             </MathJaxContext>
           </Col>
           <Col>
@@ -89,6 +139,16 @@ class Backpropagation extends React.Component {
         </Row>
       </Container>
     );
+  }
+
+  renderBackpropEquation(terms) {
+    return terms.map(term => {
+      if (term.isDerivative) {
+        return <MathJax inline><HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(" + term.text + "\\)"}</HighlightableTerm></MathJax>;
+      } else {
+        return <MathJax inline>{"\\(" + term.text + "\\)"}</MathJax>;
+      }
+    });
   }
 
   constructLatexFormattedDerivativeString(top, bottom) {
