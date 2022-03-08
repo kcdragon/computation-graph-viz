@@ -3,6 +3,9 @@ import React from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import * as mathjs from "mathjs";
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css'
+
 class Backpropagation extends React.Component {
   constructor(props) {
     super(props);
@@ -80,7 +83,7 @@ class Backpropagation extends React.Component {
           <Col>
             <h3>Playground</h3>
             <MathJaxContext>
-              <MathJax>When the equation <FocusableEquation selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 1\\)"}</FocusableEquation> is clicked, it also highlights the equation <FocusableEquation selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 1\\)"}</FocusableEquation> here. When the equation <FocusableEquation selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 2\\)"}</FocusableEquation> is clicked, it also highlights the equation <FocusableEquation selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 2\\)"}</FocusableEquation> here.</MathJax>
+              <MathJax>When the equation <HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 1\\)"}</HighlightableTerm> is clicked, it also highlights the equation <HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 1\\)"}</HighlightableTerm> here. When the equation <HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 2\\)"}</HighlightableTerm> is clicked, it also highlights the equation <HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 2\\)"}</HighlightableTerm> here.</MathJax>
             </MathJaxContext>
           </Col>
         </Row>
@@ -93,7 +96,7 @@ class Backpropagation extends React.Component {
   }
 }
 
-class FocusableEquation extends React.Component {
+class HighlightableTerm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -112,7 +115,7 @@ class FocusableEquation extends React.Component {
       style["backgroundColor"] = "#FFFF00";
     }
 
-    return <span style={style} onClick={this.onClick}>{this.props.children}</span>
+    return <span className="highlightable-term" style={style} onClick={this.onClick}>{this.props.children}</span>
   }
 }
 
