@@ -4,6 +4,19 @@ import {Col, Container, Row} from "react-bootstrap";
 import * as mathjs from "mathjs";
 
 class Backpropagation extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { selectedDerivative: null };
+
+    this.selectDerivative = this.selectDerivative.bind(this);
+  }
+
+  selectDerivative(derivative) {
+    console.log("derivative selected", derivative);
+    this.setState({ selectedDerivative: derivative });
+  }
+
   render() {
     const backpropEquations = []
     const derivativesOfFunction = {}
@@ -64,6 +77,12 @@ class Backpropagation extends React.Component {
               {backpropEquations.map((equation, index) => <MathJax key={index}>\({equation}\)</MathJax>)}
             </MathJaxContext>
           </Col>
+          <Col>
+            <h3>Playground</h3>
+            <MathJaxContext>
+              <MathJax>When the equation <FocusableEquation selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 1\\)"}</FocusableEquation> is clicked, it also highlights the equation <FocusableEquation selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 1\\)"}</FocusableEquation> here. When the equation <FocusableEquation selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 2\\)"}</FocusableEquation> is clicked, it also highlights the equation <FocusableEquation selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 2\\)"}</FocusableEquation> here.</MathJax>
+            </MathJaxContext>
+          </Col>
         </Row>
       </Container>
     );
@@ -71,6 +90,29 @@ class Backpropagation extends React.Component {
 
   constructLatexFormattedDerivativeString(top, bottom) {
     return "\\frac{\\partial " + top + "}{\\partial " + bottom + "}";
+  }
+}
+
+class FocusableEquation extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick() {
+    this.props.selectDerivative(this.props.children);
+  }
+
+  render() {
+    const shouldHighlight = this.props.selectedDerivative === this.props.children;
+
+    const style = {}
+    if (shouldHighlight) {
+      style["backgroundColor"] = "#FFFF00";
+    }
+
+    return <span style={style} onClick={this.onClick}>{this.props.children}</span>
   }
 }
 
