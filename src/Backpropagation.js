@@ -4,7 +4,7 @@ import {Col, Container, Row} from "react-bootstrap";
 import * as mathjs from "mathjs";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css'
+import './App.scss'
 
 class Backpropagation extends React.Component {
   constructor(props) {

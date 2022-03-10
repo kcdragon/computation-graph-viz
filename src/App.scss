@@ -1,0 +1,17 @@
+.highlightable-term:hover {
+    background-color: lightgray;
+}
+
+.computation-graph {
+    path:hover {
+        stroke: lightgray;
+    }
+
+    &__edge {
+        stroke: black;
+
+        &--highlighted {
+            stroke: yellow;
+        }
+    }
+}

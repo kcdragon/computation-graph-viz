@@ -60,7 +60,10 @@ class App extends React.Component {
           </Col>
           <Col md={5}>
             <h2>Computation Graph</h2>
-            <ComputationGraph graph={graph} />
+            <ComputationGraph
+              graph={graph}
+              selectedTerm={this.state.selectedTerm}
+            />
           </Col>
           <Col md={5}>
             <h2>Backpropagation</h2>

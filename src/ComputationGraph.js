@@ -20,7 +20,9 @@ class ComputationGraph extends React.Component {
 
   constructor(props) {
     super(props);
+  }
 
+  render() {
     const d = d3.dagStratify()(this.buildD3DagData(this.props.graph));
     const layout = d3
       .sugiyama()
@@ -29,14 +31,12 @@ class ComputationGraph extends React.Component {
       .coord(d3.coordGreedy())
       .nodeSize(() => [30, 30]);
     this.dag = layout(d).dag;
-  }
 
-  render() {
     return (
-      <svg width={this.props.width} height={this.props.height}>
+      <svg className="computation-graph" width={this.props.width} height={this.props.height}>
         <rect width={this.props.width} height={this.props.height} fill="#FFF"/>
-        <MarkerArrow id="marker-arrow-mid" fill="#333" refX={2} size={6}/>
-        <MarkerArrow id="marker-arrow-end" fill="#333" size={6}/>
+        <MarkerArrow id="marker-arrow" fill="#333" size={6}/>
+        <MarkerArrow id="marker-arrow-highlighted" fill="#FFFF00" size={6}/>
         <Group top={0} left={0}>
           <>
             {this.dag.links().map((link) => {
@@ -56,6 +56,16 @@ class ComputationGraph extends React.Component {
                 points[points.length - 1] = newLastPoint
               }
 
+              let linePathClassName = "computation-graph__edge";
+              let markerArrowRef = "marker-arrow"
+              if (!!this.props.selectedTerm) {
+                const { derivativeFunction, derivativeVariable } = this.props.selectedTerm;
+                if (derivativeFunction === link.target.id && derivativeVariable === link.source.id) {
+                  linePathClassName = "computation-graph__edge--highlighted";
+                  markerArrowRef = "marker-arrow-highlighted"
+                }
+              }
+
               return (
                 <LinePath
                   key={`${link.source.id}-${link.target.id}`}
@@ -63,10 +73,10 @@ class ComputationGraph extends React.Component {
                   data={link.points}
                   x={(d) => this.props.width - d.x}
                   y={(d) => this.props.height - d.y}
-                  stroke="#333"
-                  strokeWidth={2}
-                  markerMid="url(#marker-arrow-mid)"
-                  markerEnd="url(#marker-arrow-end)"
+                  strokeWidth={5}
+                  markerMid={"url(#" + markerArrowRef + ")"}
+                  markerEnd={"url(#" + markerArrowRef + ")"}
+                  className={linePathClassName}
                 />);
             })}
           </>
