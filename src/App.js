@@ -35,6 +35,19 @@ const graph = {
 };
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { selectedTerm: null };
+
+    this.selectTerm = this.selectTerm.bind(this);
+  }
+
+  selectTerm(term) {
+    console.log("selected term", term);
+    this.setState({ selectedTerm: term });
+  }
+
   render() {
     return (
       <Container>
@@ -51,7 +64,13 @@ class App extends React.Component {
           </Col>
           <Col md={5}>
             <h2>Backpropagation</h2>
-            <Backpropagation function="x_1 x_2 + sin(x_2)" sink={"a_3"} graph={graph} />
+            <Backpropagation
+              function="x_1 x_2 + sin(x_2)"
+              sink={"a_3"}
+              graph={graph}
+              selectTerm={this.selectTerm}
+              selectedTerm={this.state.selectedTerm}
+            />
           </Col>
         </Row>
       </Container>

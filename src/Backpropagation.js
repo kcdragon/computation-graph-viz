@@ -9,15 +9,6 @@ import './App.css'
 class Backpropagation extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = { selectedDerivative: null };
-
-    this.selectDerivative = this.selectDerivative.bind(this);
-  }
-
-  selectDerivative(derivative) {
-    console.log("derivative selected", derivative);
-    this.setState({ selectedDerivative: derivative });
   }
 
   render() {
@@ -33,6 +24,8 @@ class Backpropagation extends React.Component {
       const derivativeOfFWithRespectToNodeTerm = {
         text: this.constructLatexFormattedDerivativeString("f", node),
         isDerivative: true,
+        derivativeFunction: "f",
+        derivativeVariable: node,
       };
       const children = this.props.graph[node].children;
 
@@ -54,7 +47,7 @@ class Backpropagation extends React.Component {
       const terms = [derivativeOfFWithRespectToNodeTerm];
       terms.push(equalsTerm);
 
-      if (children.length == 0) {
+      if (children.length === 0) {
         derivativesOfFunction[node] = 1;
         terms.push({
           text: "1",
@@ -66,11 +59,15 @@ class Backpropagation extends React.Component {
           let derivativeOfFWithRespectToChildTerm = {
             text: this.constructLatexFormattedDerivativeString("f", child),
             isDerivative: true,
+            derivativeFunction: "f",
+            derivativeVariable: child,
           };
 
           let derivativeOfChildWithRespectToNodeTerm = {
             text: this.constructLatexFormattedDerivativeString(child, node),
             isDerivative: true,
+            derivativeFunction: child,
+            derivativeVariable: node,
           };
 
           return [derivativeOfFWithRespectToChildTerm, multiplicationTerm, derivativeOfChildWithRespectToNodeTerm, additionTerm];
@@ -122,18 +119,12 @@ class Backpropagation extends React.Component {
             <MathJaxContext>
               {backpropEquations.map((terms, index) => {
                 return (
-                  <div>
+                  <div key={index}>
                     {this.renderBackpropEquation(terms)}
                     <br />
                   </div>
                 );
               })}
-            </MathJaxContext>
-          </Col>
-          <Col>
-            <h3>Playground</h3>
-            <MathJaxContext>
-              <MathJax>When the equation <HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 1\\)"}</HighlightableTerm> is clicked, it also highlights the equation <HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 1\\)"}</HighlightableTerm> here. When the equation <HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 2\\)"}</HighlightableTerm> is clicked, it also highlights the equation <HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(x + 2\\)"}</HighlightableTerm> here.</MathJax>
             </MathJaxContext>
           </Col>
         </Row>
@@ -142,11 +133,11 @@ class Backpropagation extends React.Component {
   }
 
   renderBackpropEquation(terms) {
-    return terms.map(term => {
+    return terms.map((term, index) => {
       if (term.isDerivative) {
-        return <MathJax inline><HighlightableTerm selectedDerivative={this.state.selectedDerivative} selectDerivative={this.selectDerivative}>{"\\(" + term.text + "\\)"}</HighlightableTerm></MathJax>;
+        return <MathJax inline key={index}><HighlightableTerm term={term} selectedTerm={this.props.selectedTerm} selectTerm={this.props.selectTerm}>{"\\(" + term.text + "\\)"}</HighlightableTerm></MathJax>;
       } else {
-        return <MathJax inline>{"\\(" + term.text + "\\)"}</MathJax>;
+        return <MathJax inline key={index}>{"\\(" + term.text + "\\)"}</MathJax>;
       }
     });
   }
@@ -164,11 +155,11 @@ class HighlightableTerm extends React.Component {
   }
 
   onClick() {
-    this.props.selectDerivative(this.props.children);
+    this.props.selectTerm(this.props.term);
   }
 
   render() {
-    const shouldHighlight = this.props.selectedDerivative === this.props.children;
+    const shouldHighlight = this.props.selectedTerm && this.props.selectedTerm.text === this.props.term.text;
 
     const style = {}
     if (shouldHighlight) {
