@@ -1,5 +1,13 @@
-.highlightable-term:hover {
-    background-color: lightgray;
+$highlight-color: #FFFF00;
+
+.highlightable-term {
+    &:hover {
+        background-color: lightgray;
+    }
+
+    &--highlighted {
+        background-color: $highlight-color;
+    }
 }
 
 .computation-graph {
@@ -11,7 +19,7 @@
         stroke: black;
 
         &--highlighted {
-            stroke: yellow;
+            stroke: $highlight-color;
         }
     }
 }

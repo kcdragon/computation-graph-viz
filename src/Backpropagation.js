@@ -161,12 +161,12 @@ class HighlightableTerm extends React.Component {
   render() {
     const shouldHighlight = this.props.selectedTerm && this.props.selectedTerm.text === this.props.term.text;
 
-    const style = {}
+    let className = "highlightable-term";
     if (shouldHighlight) {
-      style["backgroundColor"] = "#FFFF00";
+      className = "highlightable-term--highlighted"
     }
 
-    return <span className="highlightable-term" style={style} onClick={this.onClick}>{this.props.children}</span>
+    return <span className={className} onClick={this.onClick}>{this.props.children}</span>
   }
 }
 
