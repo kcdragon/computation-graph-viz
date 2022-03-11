@@ -32,6 +32,40 @@ class ComputationGraph extends React.Component {
       .nodeSize(() => [30, 30]);
     this.dag = layout(d).dag;
 
+    let edgesInvolvedInDerivative = new Set()
+    if (!!this.props.selectedTerm) {
+      const { derivativeFunction, derivativeVariable } = this.props.selectedTerm;
+      const source = derivativeVariable;
+
+      let sink = derivativeFunction;
+      if (sink === "f") {
+        // since f isn't in the graph we use the last intermediary variable
+        sink = this.props.sink;
+      }
+
+      const pathsToSink = [];
+      const pathsToExplore = [[source]];
+      while (pathsToExplore.length > 0) {
+        const path = pathsToExplore.pop();
+        const node = path[path.length - 1]
+        if (node === sink) {
+          pathsToSink.push(path);
+          continue;
+        }
+
+        const children = this.props.graph[node].children;
+        const pathsFromNode = children.map(child => {
+          return path.concat([child])
+        })
+        pathsToExplore.push(...pathsFromNode)
+      }
+
+      pathsToSink.forEach(path => {
+        const edges = path.slice(1).map((node, index) => [node, path[index]]);
+        edgesInvolvedInDerivative = new Set([...edgesInvolvedInDerivative, ...edges])
+      });
+    }
+
     return (
       <svg className="computation-graph" width={this.props.width} height={this.props.height}>
         <rect width={this.props.width} height={this.props.height} fill="#FFF"/>
@@ -59,8 +93,8 @@ class ComputationGraph extends React.Component {
               let linePathClassName = "computation-graph__edge";
               let markerArrowRef = "marker-arrow"
               if (!!this.props.selectedTerm) {
-                const { derivativeFunction, derivativeVariable } = this.props.selectedTerm;
-                if (derivativeFunction === link.target.id && derivativeVariable === link.source.id) {
+                const shouldHighlightEdge = Array.from(edgesInvolvedInDerivative).some(edge => edge[0] === link.target.id && edge[1] === link.source.id);
+                if (shouldHighlightEdge) {
                   linePathClassName = "computation-graph__edge--highlighted";
                   markerArrowRef = "marker-arrow-highlighted"
                 }

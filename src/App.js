@@ -61,6 +61,7 @@ class App extends React.Component {
           <Col md={5}>
             <h2>Computation Graph</h2>
             <ComputationGraph
+              sink={"a_3"}
               graph={graph}
               selectedTerm={this.state.selectedTerm}
             />
