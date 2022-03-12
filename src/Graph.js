@@ -29,11 +29,8 @@ export function makeGraph(equationString) {
 
         if (parent !== null) {
           let parentNodeName = idToNodeName[parent.id];
-          if (graph[parentNodeName].parents.length == 1) {
-            graph[parentNodeName].equation = graph[parentNodeName].operator + "(" + graph[parentNodeName].parents[0] + ")"
-          }
+          graph[parentNodeName].equation = equationForGraphNode(graph[parentNodeName]);
         }
-
 
         break
       case 'ConstantNode':
@@ -74,9 +71,7 @@ export function makeGraph(equationString) {
         graph[symbolNodeName].children.push(parentNodeName)
 
         graph[parentNodeName].parents.push(symbolNodeName)
-        if (graph[parentNodeName].parents.length == 2) {
-          graph[parentNodeName].equation = graph[parentNodeName].parents.join(" " + graph[parentNodeName].operator + " ")
-        }
+        graph[parentNodeName].equation = equationForGraphNode(graph[parentNodeName]);
 
         idToNodeName[node.id] = symbolNodeName
 
@@ -107,5 +102,13 @@ function addOperatorNodeToGraph(graph, nodeName, parentNodeName, operation) {
     if (graph[parentNodeName].parents.length == 2) {
       graph[parentNodeName].equation = graph[parentNodeName].parents.join(" " + graph[parentNodeName].operator + " ")
     }
+  }
+}
+
+function equationForGraphNode(graphNode) {
+  if (graphNode.parents.length == 1) {
+    return graphNode.operator + "(" + graphNode.parents[0] + ")";
+  } else if (graphNode.parents.length == 2) {
+    return graphNode.parents.join(" " + graphNode.operator + " ")
   }
 }
