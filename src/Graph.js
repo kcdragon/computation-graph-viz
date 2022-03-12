@@ -16,42 +16,50 @@ export function makeGraph(equationString) {
   const idToNodeName = {}
 
   node.traverse(function (node, path, parent) {
-    node.id = idCounter
-    idCounter += 1
-
     switch (node.type) {
       case 'OperatorNode':
+        node.id = idCounter
+        idCounter += 1
+
         const operatorNodeName = "a_" + intermediaryVariableCount;
         intermediaryVariableCount -= 1;
+        idToNodeName[node.id] = operatorNodeName;
 
-        if (!graph.hasOwnProperty(operatorNodeName)) {
-          graph[operatorNodeName] = {}
-        }
-
-        graph[operatorNodeName].parents = []
-        graph[operatorNodeName].operator = node.op
-
-        if (!graph[operatorNodeName].hasOwnProperty("children")) {
-          graph[operatorNodeName].children = [];
-        }
+        addOperatorNodeToGraph(graph, operatorNodeName, parent !== null ? idToNodeName[parent.id] : null, node.op);
 
         if (parent !== null) {
-          const parentNodeName = idToNodeName[parent.id];
-          graph[operatorNodeName].children.push(parentNodeName)
-          graph[parentNodeName].parents.push(operatorNodeName)
-          if (graph[parentNodeName].parents.length == 2) {
-            graph[parentNodeName].equation = graph[parentNodeName].parents.join(" " + graph[parentNodeName].operator + " ")
+          let parentNodeName = idToNodeName[parent.id];
+          if (graph[parentNodeName].parents.length == 1) {
+            graph[parentNodeName].equation = graph[parentNodeName].operator + "(" + graph[parentNodeName].parents[0] + ")"
           }
         }
 
-        idToNodeName[node.id] = operatorNodeName
 
         break
       case 'ConstantNode':
         break
+      case 'FunctionNode':
+        node.id = idCounter
+        idCounter += 1
+
+        const functionNodeName = "a_" + intermediaryVariableCount;
+        intermediaryVariableCount -= 1;
+        idToNodeName[node.id] = functionNodeName;
+        addOperatorNodeToGraph(graph, functionNodeName, parent !== null ? idToNodeName[parent.id] : null, "sin");
+
+        break
       case 'SymbolNode':
         const symbolNodeName = node.name;
         const parentNodeName = idToNodeName[parent.id];
+
+        if (symbolNodeName === "sin") {
+          // a SymbolNode representing a function appears right after a FunctionNode, so we assign the same ID to them
+          node.id = idCounter
+          break;
+        }
+
+        node.id = idCounter
+        idCounter += 1
 
         if (!graph.hasOwnProperty(symbolNodeName)) {
           graph[symbolNodeName] = {}
@@ -80,3 +88,24 @@ export function makeGraph(equationString) {
 
   return graph;
 };
+
+function addOperatorNodeToGraph(graph, nodeName, parentNodeName, operation) {
+  if (!graph.hasOwnProperty(nodeName)) {
+    graph[nodeName] = {}
+  }
+
+  graph[nodeName].parents = []
+  graph[nodeName].operator = operation
+
+  if (!graph[nodeName].hasOwnProperty("children")) {
+    graph[nodeName].children = [];
+  }
+
+  if (parentNodeName !== null) {
+    graph[nodeName].children.push(parentNodeName)
+    graph[parentNodeName].parents.push(nodeName)
+    if (graph[parentNodeName].parents.length == 2) {
+      graph[parentNodeName].equation = graph[parentNodeName].parents.join(" " + graph[parentNodeName].operator + " ")
+    }
+  }
+}
