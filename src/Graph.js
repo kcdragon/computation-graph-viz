@@ -19,7 +19,7 @@ export function makeGraph(equationString) {
         graph["a_1"] = {}
         graph["a_1"].children = []
         graph["a_1"].parents = []
-        graph["a_1"].equation = "x_1 + x_2"
+        graph["a_1"].operator = node.op
 
         idToNodeName[node.id] = "a_1"
 
@@ -35,6 +35,9 @@ export function makeGraph(equationString) {
         graph[node.name].equation = ""
 
         graph[parentNodeName].parents.push(node.name)
+        if (graph[parentNodeName].parents.length == 2) {
+          graph[parentNodeName].equation = graph[parentNodeName].parents.join(" " + graph[parentNodeName].operator + " ")
+        }
 
         idToNodeName[node.id] = node.name
 
