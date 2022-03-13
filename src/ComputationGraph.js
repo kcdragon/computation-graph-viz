@@ -72,80 +72,92 @@ class ComputationGraph extends React.Component {
         <MarkerArrow id="marker-arrow" fill="#333" size={6}/>
         <MarkerArrow id="marker-arrow-highlighted" fill="#FFFF00" size={6}/>
         <Group top={0} left={0}>
-          <>
-            {this.dag.links().map((link) => {
-              const points = link.points
-              if (points.length === 2) {
-                const start = points[0];
-                const end = points[1];
-
-                // https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
-                const length = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2))
-                const v = [(end.x - start.x), (end.y - start.y)]
-                const u = [v[0] / length, v[1] / length]
-                const distanceToMoveMarkers = 23; // this is not perfect and might need to be tweaked if the sizes of other shapes change
-                const newLastPoint = {
-                  x: end.x - distanceToMoveMarkers * u[0],
-                  y: end.y - distanceToMoveMarkers * u[1],
-                }
-                points[points.length - 1] = newLastPoint
-              }
-
-              let linePathClassName = "computation-graph__edge";
-              let markerArrowRef = "marker-arrow"
-              if (!!this.props.selectedTerm) {
-                const shouldHighlightEdge = Array.from(edgesInvolvedInDerivative).some(edge => edge[0] === link.target.id && edge[1] === link.source.id);
-                if (shouldHighlightEdge) {
-                  linePathClassName = "computation-graph__edge--highlighted";
-                  markerArrowRef = "marker-arrow-highlighted"
-                }
-              }
-
-              return (
-                <LinePath
-                  key={`${link.source.id}-${link.target.id}`}
-                  curve={curveCatmullRom}
-                  data={link.points}
-                  x={(d) => this.props.width - d.x}
-                  y={(d) => this.props.height - d.y}
-                  strokeWidth={2}
-                  markerMid={"url(#" + markerArrowRef + ")"}
-                  markerEnd={"url(#" + markerArrowRef + ")"}
-                  className={linePathClassName}
-                />);
-            })}
-          </>
-          <>
-            {this.dag.descendants().map((d) => {
-              let label = d.data.label || d.id;
-              return (
-                <Group key={d.id}>
-                  <ellipse
-                    cx={this.props.width - d.x}
-                    cy={this.props.height - d.y}
-                    rx={60}
-                    ry={20}
-                    stroke="black"
-                    fill="white"
-                  />
-
-                  <foreignObject
-                    x={this.props.width - d.x - 50}
-                    y={this.props.height - d.y - 15}
-                    width="100"
-                    height="100">
-                    <div style={{textAlign: "center"}}>
-                      <MathJaxContext>
-                        <MathJax>{"\\(" + label + "\\)"}</MathJax>
-                      </MathJaxContext>
-                    </div>
-                  </foreignObject>
-                </Group>
-              );
-            })}
-          </>
+          {this.renderEdges(edgesInvolvedInDerivative)}
+          {this.renderNodes()}
         </Group>
       </svg>
+    );
+  }
+
+  renderEdges(edgesInvolvedInDerivative) {
+    return (
+      <>
+        {this.dag.links().map((link) => {
+          const points = link.points
+          if (points.length === 2) {
+            const start = points[0];
+            const end = points[1];
+
+            // https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
+            const length = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2))
+            const v = [(end.x - start.x), (end.y - start.y)]
+            const u = [v[0] / length, v[1] / length]
+            const distanceToMoveMarkers = 23; // this is not perfect and might need to be tweaked if the sizes of other shapes change
+            const newLastPoint = {
+              x: end.x - distanceToMoveMarkers * u[0],
+              y: end.y - distanceToMoveMarkers * u[1],
+            }
+            points[points.length - 1] = newLastPoint
+          }
+
+          let linePathClassName = "computation-graph__edge";
+          let markerArrowRef = "marker-arrow"
+          if (!!this.props.selectedTerm) {
+            const shouldHighlightEdge = Array.from(edgesInvolvedInDerivative).some(edge => edge[0] === link.target.id && edge[1] === link.source.id);
+            if (shouldHighlightEdge) {
+              linePathClassName = "computation-graph__edge--highlighted";
+              markerArrowRef = "marker-arrow-highlighted"
+            }
+          }
+
+          return (
+            <LinePath
+              key={`${link.source.id}-${link.target.id}`}
+              curve={curveCatmullRom}
+              data={link.points}
+              x={(d) => this.props.width - d.x}
+              y={(d) => this.props.height - d.y}
+              strokeWidth={2}
+              markerMid={"url(#" + markerArrowRef + ")"}
+              markerEnd={"url(#" + markerArrowRef + ")"}
+              className={linePathClassName}
+            />);
+        })}
+      </>
+    );
+  }
+
+  renderNodes() {
+    return (
+      <>
+        {this.dag.descendants().map((d) => {
+          let label = d.data.label || d.id;
+          return (
+            <Group key={d.id}>
+              <ellipse
+                cx={this.props.width - d.x}
+                cy={this.props.height - d.y}
+                rx={60}
+                ry={20}
+                stroke="black"
+                fill="white"
+              />
+
+              <foreignObject
+                x={this.props.width - d.x - 50}
+                y={this.props.height - d.y - 15}
+                width="100"
+                height="100">
+                <div style={{textAlign: "center"}}>
+                  <MathJaxContext>
+                    <MathJax>{"\\(" + label + "\\)"}</MathJax>
+                  </MathJaxContext>
+                </div>
+              </foreignObject>
+            </Group>
+          );
+        })}
+      </>
     );
   }
 
