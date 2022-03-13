@@ -40,14 +40,14 @@ export function makeGraph(equationString) {
         const functionNodeName = "a_" + intermediaryVariableCount;
         intermediaryVariableCount -= 1;
         idToNodeName[node.id] = functionNodeName;
-        addOperatorNodeToGraph(graph, functionNodeName, parent !== null ? idToNodeName[parent.id] : null, "sin");
+        addOperatorNodeToGraph(graph, functionNodeName, parent !== null ? idToNodeName[parent.id] : null, node.name);
 
         break
       case 'SymbolNode':
         const symbolNodeName = node.name;
         const parentNodeName = idToNodeName[parent.id];
 
-        if (symbolNodeName === "sin") {
+        if (isSymbolAFunction(symbolNodeName)) {
           // a SymbolNode representing a function appears right after a FunctionNode, so we assign the same ID to them
           node.id = idCounter
           break;
@@ -109,4 +109,8 @@ function equationForGraphNode(graphNode) {
   } else if (graphNode.parents.length == 2) {
     return graphNode.parents.join(" " + graphNode.operator + " ")
   }
+}
+
+function isSymbolAFunction(symbol) {
+  return mathjs.hasOwnProperty(symbol);
 }
