@@ -83,9 +83,10 @@ class ComputationGraph extends React.Component {
                 const length = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2))
                 const v = [(end.x - start.x), (end.y - start.y)]
                 const u = [v[0] / length, v[1] / length]
+                const distanceToMoveMarkers = 23; // this is not perfect and might need to be tweaked if the sizes of other shapes change
                 const newLastPoint = {
-                  x: end.x - 10 * u[0],
-                  y: end.y - 10 * u[1],
+                  x: end.x - distanceToMoveMarkers * u[0],
+                  y: end.y - distanceToMoveMarkers * u[1],
                 }
                 points[points.length - 1] = newLastPoint
               }
@@ -107,7 +108,7 @@ class ComputationGraph extends React.Component {
                   data={link.points}
                   x={(d) => this.props.width - d.x}
                   y={(d) => this.props.height - d.y}
-                  strokeWidth={5}
+                  strokeWidth={2}
                   markerMid={"url(#" + markerArrowRef + ")"}
                   markerEnd={"url(#" + markerArrowRef + ")"}
                   className={linePathClassName}

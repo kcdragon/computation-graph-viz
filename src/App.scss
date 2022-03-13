@@ -11,10 +11,6 @@ $highlight-color: #FFFF00;
 }
 
 .computation-graph {
-    path:hover {
-        stroke: lightgray;
-    }
-
     &__edge {
         stroke: black;
 
