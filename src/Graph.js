@@ -33,8 +33,6 @@ export function makeGraph(equationString) {
         }
 
         break
-      case 'ConstantNode':
-        break
       case 'FunctionNode':
         node.id = idCounter
         idCounter += 1
@@ -77,7 +75,7 @@ export function makeGraph(equationString) {
 
         break
       default:
-        console.log("UNSUPPORTED NODE TYPE")
+        throw "UNSUPPORTED NODE TYPE";
     }
   })
 
