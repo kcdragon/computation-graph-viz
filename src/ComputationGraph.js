@@ -18,10 +18,6 @@ class ComputationGraph extends React.Component {
     height: 600,
   }
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const d = d3.dagStratify()(this.buildD3DagData(this.props.graph));
     const layout = d3
@@ -129,9 +125,10 @@ class ComputationGraph extends React.Component {
 
   renderNodes() {
     return (
-      <>
+      <MathJaxContext>
         {this.dag.descendants().map((d) => {
           let label = d.data.label || d.id;
+          console.log("label", label);
           return (
             <Group key={d.id}>
               <ellipse
@@ -149,15 +146,13 @@ class ComputationGraph extends React.Component {
                 width="100"
                 height="100">
                 <div style={{textAlign: "center"}}>
-                  <MathJaxContext>
-                    <MathJax>{"\\(" + label + "\\)"}</MathJax>
-                  </MathJaxContext>
+                  <MathJax dynamic>{"\\( " + label + " \\)"}</MathJax>
                 </div>
               </foreignObject>
             </Group>
           );
         })}
-      </>
+      </MathJaxContext>
     );
   }
 

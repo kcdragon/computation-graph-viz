@@ -7,10 +7,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.scss'
 
 class Backpropagation extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const backpropEquations = []
     const derivativesOfFunction = {}
@@ -124,9 +120,9 @@ class Backpropagation extends React.Component {
   renderBackpropEquation(terms) {
     return terms.map((term, index) => {
       if (term.isDerivative) {
-        return <MathJax inline key={index}><HighlightableTerm term={term} selectedTerm={this.props.selectedTerm} selectTerm={this.props.selectTerm}>{"\\(" + term.text + "\\)"}</HighlightableTerm></MathJax>;
+        return <MathJax inline dynamic key={index}><HighlightableTerm term={term} selectedTerm={this.props.selectedTerm} selectTerm={this.props.selectTerm}>{"\\(" + term.text + "\\)"}</HighlightableTerm></MathJax>;
       } else {
-        return <MathJax inline key={index}>{"\\(" + term.text + "\\)"}</MathJax>;
+        return <MathJax inline dynamic key={index}>{"\\(" + term.text + "\\)"}</MathJax>;
       }
     });
   }
