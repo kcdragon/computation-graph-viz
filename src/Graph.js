@@ -112,5 +112,5 @@ function equationForGraphNode(graphNode) {
 }
 
 function isSymbolAFunction(symbol) {
-  return mathjs.hasOwnProperty(symbol);
+  return !!mathjs[symbol];
 }

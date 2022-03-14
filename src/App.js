@@ -3,36 +3,10 @@ import React from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import Backpropagation from "./Backpropagation";
 import ComputationGraph from "./ComputationGraph";
+import { makeGraph } from "./Graph";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const graph = {
-  x_1: {
-    equation: "",
-    parents: [],
-    children: ["a_2"],
-  },
-  x_2: {
-    equation: "",
-    parents: [],
-    children: ["a_1", "a_2"],
-  },
-  a_1: {
-    equation: "sin(x_2)",
-    parents: ["x_2"],
-    children: ["a_3"],
-  },
-  a_2: {
-    equation: "x_1 x_2",
-    parents: ["x_1", "x_2"],
-    children: ["a_3"],
-  },
-  a_3: {
-    equation: "a_1 + a_2",
-    parents: ["a_1", "a_2"],
-    children: [],
-  },
-};
 
 class App extends React.Component {
   constructor(props) {
@@ -41,6 +15,8 @@ class App extends React.Component {
     this.state = { selectedTerm: null };
 
     this.selectTerm = this.selectTerm.bind(this);
+
+    this.graph = makeGraph("x_1 x_2 + sin(x_2)");
   }
 
   selectTerm(term) {
@@ -62,7 +38,7 @@ class App extends React.Component {
             <h2>Computation Graph</h2>
             <ComputationGraph
               sink={"a_3"}
-              graph={graph}
+              graph={this.graph}
               selectedTerm={this.state.selectedTerm}
             />
           </Col>
@@ -71,7 +47,7 @@ class App extends React.Component {
             <Backpropagation
               function="x_1 x_2 + sin(x_2)"
               sink={"a_3"}
-              graph={graph}
+              graph={this.graph}
               selectTerm={this.selectTerm}
               selectedTerm={this.state.selectedTerm}
             />
