@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "name": "x1"
+    },
+    {
+      "id": 2,
+      "name": "x2"
+    },
+    {
+      "id": 3,
+      "name": "sin()"
+    },
+    {
+      "id": 4,
+      "name": "*"
+    },
+    {
+      "id": 5,
+      "name": "+"
+    }
+  ],
+  "links": [
+
+    {
+      "source": 1,
+      "target": 4
+    },
+    {
+      "source": 2,
+      "target": 3
+    },
+    {
+      "source": 2,
+      "target": 4
+    },
+    {
+      "source": 3,
+      "target": 5
+    },
+    {
+      "source": 4,
+      "target": 5
+    }
+  ]
+}

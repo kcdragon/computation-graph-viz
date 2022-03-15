@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/computation-graph-viz/static/css/main.9db43de4.css",
+    "main.js": "/computation-graph-viz/static/js/main.1ef02345.js",
+    "static/js/787.bf7396d0.chunk.js": "/computation-graph-viz/static/js/787.bf7396d0.chunk.js",
+    "index.html": "/computation-graph-viz/index.html",
+    "main.9db43de4.css.map": "/computation-graph-viz/static/css/main.9db43de4.css.map",
+    "main.1ef02345.js.map": "/computation-graph-viz/static/js/main.1ef02345.js.map",
+    "787.bf7396d0.chunk.js.map": "/computation-graph-viz/static/js/787.bf7396d0.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9db43de4.css",
+    "static/js/main.1ef02345.js"
+  ]
+}
