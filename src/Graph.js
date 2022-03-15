@@ -10,6 +10,7 @@ export function makeGraph(equationString) {
     }
   });
   intermediaryVariableCount -= 1;
+  const sink = "a_" + intermediaryVariableCount;
 
   let idCounter = 0;
   const graph = {}
@@ -79,7 +80,7 @@ export function makeGraph(equationString) {
     }
   })
 
-  return graph;
+  return { graph, sink };
 };
 
 function addOperatorNodeToGraph(graph, nodeName, parentNodeName, operation) {

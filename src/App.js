@@ -13,20 +13,20 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.equations = [
-      {
-        text: "\\( f(x_1, x_2) = x_1 x_2 + sin(x_2) \\)",
-        function: "x_1 x_2 + sin(x_2)",
-        graph: makeGraph("x_1 x_2 + sin(x_2)"),
-        sink: "a_3",
-      },
-      {
-        text: "\\( f(x_1, x_2) = x_1 + x_2 \\)",
-        function: "x_1 + x_2",
-        graph: makeGraph("x_1 + x_2"),
-        sink: "a_1",
-      },
-    ]
+    let equationStrings = [
+      "x_1 x_2 + sin(x_2)",
+      "x_1 + x_2",
+      "x_1 + x_2 + x_3",
+    ];
+    this.equations = equationStrings.map(equation => {
+      const { graph, sink } = makeGraph(equation);
+      return {
+        text: "\\( f = " + equation + " \\)",
+        function: equation,
+        graph,
+        sink,
+      }
+    });
 
     this.state = {
       selectedTerm: null,
