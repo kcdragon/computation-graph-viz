@@ -18,7 +18,9 @@ class ComputationGraph extends React.Component {
     height: 600,
   }
 
-  render() {
+  constructor(props) {
+    super(props);
+
     const d = d3.dagStratify()(this.buildD3DagData(this.props.graph));
     const layout = d3
       .sugiyama()
@@ -27,7 +29,9 @@ class ComputationGraph extends React.Component {
       .coord(d3.coordGreedy())
       .nodeSize(() => [30, 30]);
     this.dag = layout(d).dag;
+  }
 
+  render() {
     let edgesInvolvedInDerivative = new Set()
     if (!!this.props.selectedTerm) {
       const { derivativeFunction, derivativeVariable } = this.props.selectedTerm;
@@ -79,7 +83,7 @@ class ComputationGraph extends React.Component {
     return (
       <>
         {this.dag.links().map((link) => {
-          const points = link.points
+          let points = link.points
           if (points.length === 2) {
             const start = points[0];
             const end = points[1];
@@ -93,7 +97,7 @@ class ComputationGraph extends React.Component {
               x: end.x - distanceToMoveMarkers * u[0],
               y: end.y - distanceToMoveMarkers * u[1],
             }
-            points[points.length - 1] = newLastPoint
+            points = points.slice(0, -1).concat([newLastPoint])
           }
 
           let linePathClassName = "computation-graph__edge";
@@ -110,7 +114,7 @@ class ComputationGraph extends React.Component {
             <LinePath
               key={`${link.source.id}-${link.target.id}`}
               curve={curveCatmullRom}
-              data={link.points}
+              data={points}
               x={(d) => this.props.width - d.x}
               y={(d) => this.props.height - d.y}
               strokeWidth={2}
