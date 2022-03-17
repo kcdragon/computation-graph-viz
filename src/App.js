@@ -7,6 +7,7 @@ import { makeGraph } from "./Graph";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import FormCheckInput from "react-bootstrap/FormCheckInput";
+import LoremIpsum from "react-lorem-ipsum";
 
 
 class App extends React.Component {
@@ -82,6 +83,10 @@ class App extends React.Component {
               selectedTerm={this.state.selectedTerm}
             />
           </Col>
+        </Row>
+        <Row>
+          <h2>Article</h2>
+          <LoremIpsum p={5} />
         </Row>
       </Container>
     );
