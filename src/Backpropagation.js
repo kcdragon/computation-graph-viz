@@ -103,6 +103,8 @@ class Backpropagation extends React.Component {
       node = needToVisit.shift();
     }
 
+    console.log("finished building backpropEquations")
+
     return (
       <Container>
         <Row>
@@ -124,6 +126,7 @@ class Backpropagation extends React.Component {
   }
 
   renderBackpropEquation(terms) {
+    console.log("starting to render backprop equation")
     return terms.map((term, index) => {
       if (term.isDerivative) {
         return <MathJax inline dynamic key={index}><HighlightableTerm term={term} selectedTerm={this.props.selectedTerm} selectTerm={this.props.selectTerm}>{"\\(" + term.text + "\\)"}</HighlightableTerm></MathJax>;

@@ -70,14 +70,22 @@ class ComputationGraph extends React.Component {
 
     console.log("finished building edgesInvolvedInDerivative")
 
+    const renderedEdges = this.renderEdges(edgesInvolvedInDerivative);
+
+    console.log("finished rendering edges")
+
+    const renderedNodes = this.renderNodes();
+
+    console.log("finished rendering nodes")
+
     return (
       <svg className="computation-graph" width={this.props.width} height={this.props.height}>
         <rect width={this.props.width} height={this.props.height} fill="#FFF"/>
         <MarkerArrow id="marker-arrow" fill="#333" size={6}/>
         <MarkerArrow id="marker-arrow-highlighted" fill="#FFFF00" size={6}/>
         <Group top={0} left={0}>
-          {this.renderEdges(edgesInvolvedInDerivative)}
-          {this.renderNodes()}
+          {renderedEdges}
+          {renderedNodes}
         </Group>
       </svg>
     );
