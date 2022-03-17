@@ -55,16 +55,18 @@ class App extends React.Component {
           <Col md={3}>
             <h2>Equation</h2>
             <MathJaxContext>
-              {this.equations.map((equation, index) => {
-                return (
-                  <FormCheck key={index}>
-                    <FormCheckInput type="radio" name={"equation-" + index} checked={this.state.selectedEquationIndex === index} onChange={() => { this.selectEquation(index) }}></FormCheckInput>
-                    <label htmlFor={"equation-" + index}>
-                      <MathJax>{equation.text}</MathJax>
-                    </label>
-                  </FormCheck>
-                );
-              })}
+              <MathJax>
+                {this.equations.map((equation, index) => {
+                  return (
+                    <FormCheck key={index}>
+                      <FormCheckInput type="radio" name={"equation-" + index} checked={this.state.selectedEquationIndex === index} onChange={() => { this.selectEquation(index) }}></FormCheckInput>
+                      <label htmlFor={"equation-" + index}>
+                        {equation.text}
+                      </label>
+                    </FormCheck>
+                  );
+                })}
+              </MathJax>
             </MathJaxContext>
           </Col>
           <Col md={5}>

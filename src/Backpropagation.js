@@ -110,14 +110,15 @@ class Backpropagation extends React.Component {
         <Row>
           <Col>
             <MathJaxContext>
-              {backpropEquations.map((terms, index) => {
-                return (
-                  <div key={index}>
-                    {this.renderBackpropEquation(terms)}
-                    <br />
-                  </div>
-                );
-              })}
+              <MathJax dynamic>
+                {backpropEquations.map((terms, index) => {
+                  return (
+                    <div key={index}>
+                      {this.renderBackpropEquation(terms)}
+                    </div>
+                  );
+                })}
+              </MathJax>
             </MathJaxContext>
           </Col>
         </Row>
@@ -129,9 +130,17 @@ class Backpropagation extends React.Component {
     console.log("starting to render backprop equation")
     return terms.map((term, index) => {
       if (term.isDerivative) {
-        return <MathJax inline dynamic key={index}><HighlightableTerm term={term} selectedTerm={this.props.selectedTerm} selectTerm={this.props.selectTerm}>{"\\(" + term.text + "\\)"}</HighlightableTerm></MathJax>;
+        return (
+          <HighlightableTerm key={index} term={term} selectedTerm={this.props.selectedTerm} selectTerm={this.props.selectTerm}>
+            {"\\(" + term.text + "\\)"}
+          </HighlightableTerm>
+        );
       } else {
-        return <MathJax inline dynamic key={index}>{"\\(" + term.text + "\\)"}</MathJax>;
+        return (
+          <span key={index}>
+            {"\\(" + term.text + "\\)"}
+          </span>
+        );
       }
     });
   }
