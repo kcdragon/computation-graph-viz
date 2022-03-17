@@ -7,6 +7,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.scss'
 
 class Backpropagation extends React.Component {
+  constructor(props) {
+    console.log("Backpropagation constructor called")
+
+    super(props);
+  }
+
   render() {
     const backpropEquations = []
     const derivativesOfFunction = {}

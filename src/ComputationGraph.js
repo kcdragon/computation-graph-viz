@@ -19,6 +19,8 @@ class ComputationGraph extends React.Component {
   }
 
   constructor(props) {
+    console.log("ComputationGraph constructor called")
+
     super(props);
 
     const d = d3.dagStratify()(this.buildD3DagData(this.props.graph));
@@ -65,6 +67,8 @@ class ComputationGraph extends React.Component {
         edgesInvolvedInDerivative = new Set([...edgesInvolvedInDerivative, ...edges])
       });
     }
+
+    console.log("finished building edgesInvolvedInDerivative")
 
     return (
       <svg className="computation-graph" width={this.props.width} height={this.props.height}>
@@ -132,7 +136,6 @@ class ComputationGraph extends React.Component {
       <MathJaxContext>
         {this.dag.descendants().map((d) => {
           let label = d.data.label || d.id;
-          console.log("label", label);
           return (
             <Group key={d.id}>
               <ellipse

@@ -12,6 +12,8 @@ import LoremIpsum from "react-lorem-ipsum";
 
 class App extends React.Component {
   constructor(props) {
+    console.log("App constructor called")
+
     super(props);
 
     let equationStrings = [
