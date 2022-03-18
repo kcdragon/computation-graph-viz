@@ -110,7 +110,7 @@ class Backpropagation extends React.Component {
         <Row>
           <Col>
             <MathJaxContext>
-              <MathJax dynamic>
+              <MathJax dynamic={this.props.useDynamicMathJax}>
                 {backpropEquations.map((terms, index) => {
                   return (
                     <div key={index}>

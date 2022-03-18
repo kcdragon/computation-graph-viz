@@ -41,11 +41,11 @@ class App extends React.Component {
   }
 
   selectTerm(term) {
-    this.setState({ selectedTerm: term });
+    this.setState({ selectedTerm: term, useDynamicMathJax: false });
   }
 
   selectEquation(equationIndex) {
-    this.setState({ selectedEquationIndex: equationIndex });
+    this.setState({ selectedEquationIndex: equationIndex, useDynamicMathJax: true });
   }
 
   render() {
@@ -85,6 +85,7 @@ class App extends React.Component {
               graph={this.equations[this.state.selectedEquationIndex].graph}
               selectTerm={this.selectTerm}
               selectedTerm={this.state.selectedTerm}
+              useDynamicMathJax={this.state.useDynamicMathJax}
             />
           </Col>
         </Row>
