@@ -41,11 +41,18 @@ class App extends React.Component {
   }
 
   selectTerm(term) {
-    this.setState({ selectedTerm: term, useDynamicMathJax: false });
+    this.setState({
+      selectedTerm: term,
+      useDynamicMathJax: false,
+    });
   }
 
   selectEquation(equationIndex) {
-    this.setState({ selectedEquationIndex: equationIndex, useDynamicMathJax: true });
+    this.setState({
+      selectedEquationIndex: equationIndex,
+      selectedTerm: null,
+      useDynamicMathJax: true,
+    });
   }
 
   render() {
