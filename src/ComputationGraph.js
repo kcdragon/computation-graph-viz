@@ -18,11 +18,7 @@ class ComputationGraph extends React.Component {
     height: 600,
   }
 
-  constructor(props) {
-    console.log("ComputationGraph constructor called")
-
-    super(props);
-
+  render() {
     const d = d3.dagStratify()(this.buildD3DagData(this.props.graph));
     const layout = d3
       .sugiyama()
@@ -30,10 +26,8 @@ class ComputationGraph extends React.Component {
       .decross(d3.decrossTwoLayer())
       .coord(d3.coordGreedy())
       .nodeSize(() => [30, 30]);
-    this.dag = layout(d).dag;
-  }
+    const dag = layout(d).dag;
 
-  render() {
     let edgesInvolvedInDerivative = new Set()
     if (!!this.props.selectedTerm) {
       const { derivativeFunction, derivativeVariable } = this.props.selectedTerm;
@@ -68,15 +62,8 @@ class ComputationGraph extends React.Component {
       });
     }
 
-    console.log("finished building edgesInvolvedInDerivative")
-
-    const renderedEdges = this.renderEdges(edgesInvolvedInDerivative);
-
-    console.log("finished rendering edges")
-
-    const renderedNodes = this.renderNodes();
-
-    console.log("finished rendering nodes")
+    const renderedEdges = this.renderEdges(dag, edgesInvolvedInDerivative);
+    const renderedNodes = this.renderNodes(dag);
 
     return (
       <svg className="computation-graph" width={this.props.width} height={this.props.height}>
@@ -91,10 +78,10 @@ class ComputationGraph extends React.Component {
     );
   }
 
-  renderEdges(edgesInvolvedInDerivative) {
+  renderEdges(dag, edgesInvolvedInDerivative) {
     return (
       <>
-        {this.dag.links().map((link) => {
+        {dag.links().map((link) => {
           let points = link.points
           if (points.length === 2) {
             const start = points[0];
@@ -139,10 +126,10 @@ class ComputationGraph extends React.Component {
     );
   }
 
-  renderNodes() {
+  renderNodes(dag) {
     return (
       <MathJaxContext>
-        {this.dag.descendants().map((d) => {
+        {dag.descendants().map((d) => {
           let label = d.data.label || d.id;
           return (
             <Group key={d.id}>
