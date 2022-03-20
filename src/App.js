@@ -7,7 +7,7 @@ import { makeGraph } from "./Graph";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import FormCheckInput from "react-bootstrap/FormCheckInput";
-import LoremIpsum from "react-lorem-ipsum";
+import Article from "./Article";
 
 
 class App extends React.Component {
@@ -97,8 +97,7 @@ class App extends React.Component {
           </Col>
         </Row>
         <Row>
-          <h2>Article</h2>
-          <LoremIpsum p={5} />
+          <Article />
         </Row>
       </Container>
     );
