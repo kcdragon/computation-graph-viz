@@ -69,7 +69,7 @@ class ComputationGraph extends React.Component {
       <svg className="computation-graph" width={this.props.width} height={this.props.height}>
         <rect width={this.props.width} height={this.props.height} fill="#FFF"/>
         <MarkerArrow id="marker-arrow" fill="#333" size={6}/>
-        <MarkerArrow id="marker-arrow-highlighted" fill="#FFFF00" size={6}/>
+        <MarkerArrow id="marker-arrow-highlighted" fill="#01FF70" size={6}/>
         <Group top={0} left={0}>
           {renderedEdges}
           {renderedNodes}
