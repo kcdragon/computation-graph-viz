@@ -14,7 +14,7 @@ const d3 = Object.assign({}, d3Base, d3Dag);
 
 class ComputationGraph extends React.Component {
   static defaultProps = {
-    width: 600,
+    width: 400,
     height: 600,
   }
 

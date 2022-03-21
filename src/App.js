@@ -18,8 +18,7 @@ class App extends React.Component {
 
     let equationStrings = [
       "x_1 x_2 + sin(x_2)",
-      "x_1 + x_2",
-      "x_1 + x_2 + x_3",
+      "w_1 * x_1 + w_2 * x_2"
     ];
     this.equations = equationStrings.map(equation => {
       const { graph, sink } = makeGraph(equation);
