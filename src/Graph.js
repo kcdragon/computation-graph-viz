@@ -19,14 +19,20 @@ export function makeGraph(equationString) {
   node.traverse(function (node, path, parent) {
     switch (node.type) {
       case 'OperatorNode':
-        node.id = idCounter
-        idCounter += 1
+        if (parent !== null && parent.type === 'ParenthesisNode') {
+          node.id = parent.id
+          node.parent = parent.parent
+        } else {
+          node.id = idCounter
+          node.parent = parent
+          idCounter += 1
+        }
 
         const operatorNodeName = "a_" + intermediaryVariableCount;
         intermediaryVariableCount -= 1;
         idToNodeName[node.id] = operatorNodeName;
 
-        addOperatorNodeToGraph(graph, operatorNodeName, parent !== null ? idToNodeName[parent.id] : null, node.op);
+        addOperatorNodeToGraph(graph, operatorNodeName, node.parent !== null ? idToNodeName[node.parent.id] : null, node.op);
 
         if (parent !== null) {
           let parentNodeName = idToNodeName[parent.id];
@@ -36,12 +42,19 @@ export function makeGraph(equationString) {
         break
       case 'FunctionNode':
         node.id = idCounter
+        node.parent = parent
         idCounter += 1
 
         const functionNodeName = "a_" + intermediaryVariableCount;
         intermediaryVariableCount -= 1;
         idToNodeName[node.id] = functionNodeName;
         addOperatorNodeToGraph(graph, functionNodeName, parent !== null ? idToNodeName[parent.id] : null, node.name);
+
+        break
+      case 'ParenthesisNode':
+        node.id = idCounter
+        node.parent = parent
+        idCounter += 1
 
         break
       case 'SymbolNode':
@@ -51,10 +64,12 @@ export function makeGraph(equationString) {
         if (isSymbolAFunction(symbolNodeName)) {
           // a SymbolNode representing a function appears right after a FunctionNode, so we assign the same ID to them
           node.id = idCounter
+          node.parent = parent.parent
           break;
         }
 
         node.id = idCounter
+        node.parent = parent
         idCounter += 1
 
         if (!graph.hasOwnProperty(symbolNodeName)) {
@@ -76,7 +91,7 @@ export function makeGraph(equationString) {
 
         break
       default:
-        throw "UNSUPPORTED NODE TYPE";
+        throw "UNSUPPORTED NODE TYPE: " + node.type;
     }
   })
 

@@ -2,7 +2,7 @@ import {makeGraph} from './Graph';
 
 test('makeGraph builds Graph for addition equation', () => {
   let equationString = "x_1 + x_2";
-  let graph = makeGraph(equationString);
+  let { graph, sink } = makeGraph(equationString);
 
   const expectedGraph = {
     x_1: {
@@ -28,7 +28,7 @@ test('makeGraph builds Graph for addition equation', () => {
 
 test('makeGraph builds Graph for multiplication equation', () => {
   let equationString = "x_1 x_2";
-  let graph = makeGraph(equationString);
+  let { graph, sink } = makeGraph(equationString);
 
   const expectedGraph = {
     x_1: {
@@ -54,7 +54,7 @@ test('makeGraph builds Graph for multiplication equation', () => {
 
 test('makeGraph builds Graph for two term equation', () => {
   let equationString = "x_1 x_2 + x_1";
-  let graph = makeGraph(equationString);
+  let { graph, sink } = makeGraph(equationString);
 
   const expectedGraph = {
     x_1: {
@@ -86,7 +86,7 @@ test('makeGraph builds Graph for two term equation', () => {
 
 test('makeGraph builds Graph for unary operator equation', () => {
   let equationString = "sin(x_1 * x_2)";
-  let graph = makeGraph(equationString);
+  let { graph, sink } = makeGraph(equationString);
 
   const expectedGraph = {
     x_1: {
@@ -118,7 +118,7 @@ test('makeGraph builds Graph for unary operator equation', () => {
 
 test('makeGraph builds Graph for cosine unary operator equation', () => {
   let equationString = "cos(x_1 * x_2)";
-  let graph = makeGraph(equationString);
+  let { graph, sink } = makeGraph(equationString);
 
   const expectedGraph = {
     x_1: {
@@ -150,7 +150,7 @@ test('makeGraph builds Graph for cosine unary operator equation', () => {
 
 test('makeGraph builds Graph for equation with unary and binary operators', () => {
   let equationString = "x_1 x_2 + sin(x_2)";
-  let graph = makeGraph(equationString);
+  let { graph, sink } = makeGraph(equationString);
 
   const expectedGraph = {
     x_1: {
@@ -180,6 +180,38 @@ test('makeGraph builds Graph for equation with unary and binary operators', () =
       parents: ["a_2", "a_1"],
       children: [],
       operator: "+",
+    },
+  };
+
+  expect(graph).toEqual(expectedGraph);
+});
+
+test('makeGraph builds Graph for equation with parentheses', () => {
+  let equationString = "x_1 * (x_1 + x_2)";
+  let { graph, sink } = makeGraph(equationString);
+
+  const expectedGraph = {
+    x_1: {
+      equation: "",
+      parents: [],
+      children: ["a_2", "a_1"],
+    },
+    x_2: {
+      equation: "",
+      parents: [],
+      children: ["a_1"],
+    },
+    a_1: {
+      equation: "x_1 + x_2",
+      parents: ["x_1", "x_2"],
+      children: ["a_2"],
+      operator: "+",
+    },
+    a_2: {
+      equation: "x_1 * a_1",
+      parents: ["x_1", "a_1"],
+      children: [],
+      operator: "*",
     },
   };
 
