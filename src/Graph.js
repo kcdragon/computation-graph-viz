@@ -5,7 +5,7 @@ export function makeGraph(equationString) {
 
   let intermediaryVariableCount = 0;
   node.traverse(function (node, path, parent) {
-    if (node.isSymbolNode) {
+    if (node.isSymbolNode || node.type === "ConstantNode") {
       intermediaryVariableCount += 1;
     }
   });
@@ -90,10 +90,23 @@ export function makeGraph(equationString) {
         idToNodeName[node.id] = symbolNodeName
 
         break
+      case 'ConstantNode':
+        graph[idToNodeName[parent.id]].parents.push(node.value)
+        graph[idToNodeName[parent.id]].equation = equationForGraphNode(graph[idToNodeName[parent.id]]);
+
+        break
       default:
         throw "UNSUPPORTED NODE TYPE: " + node.type;
     }
   })
+
+  // Remove constants added to parents since they aren't nodes in the graph
+  const nodeNames = Object.keys(graph)
+  Object.entries(graph).forEach(([nodeName, node]) => {
+    node.parents = node.parents.filter(parent => {
+      return nodeNames.includes(parent)
+    });
+  });
 
   return { graph, sink };
 };
