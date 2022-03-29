@@ -127,11 +127,10 @@ class Backpropagation extends React.Component {
   }
 
   renderBackpropEquation(terms) {
-    console.log("starting to render backprop equation")
     return terms.map((term, index) => {
       if (term.isDerivative) {
         return (
-          <HighlightableTerm key={index} term={term} selectedTerm={this.props.selectedTerm} selectTerm={this.props.selectTerm}>
+          <HighlightableTerm key={index} term={term} selectedTerm={this.props.selectedTerm} selectedEdge={this.props.selectedEdge} selectTerm={this.props.selectTerm}>
             {"\\(" + term.text + "\\)"}
           </HighlightableTerm>
         );
@@ -162,7 +161,12 @@ class HighlightableTerm extends React.Component {
   }
 
   render() {
-    const shouldHighlight = this.props.selectedTerm && this.props.selectedTerm.text === this.props.term.text;
+    const { term, selectedTerm, selectedEdge } = this.props;
+
+    let shouldHighlight = selectedTerm && selectedTerm.text === term.text;
+    if (!!selectedEdge) {
+      shouldHighlight = shouldHighlight || term.derivativeFunction === selectedEdge.target && term.derivativeVariable === selectedEdge.source;
+    }
 
     let className = "highlightable-term";
     if (shouldHighlight) {

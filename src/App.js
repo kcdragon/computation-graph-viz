@@ -36,12 +36,22 @@ class App extends React.Component {
     };
 
     this.selectTerm = this.selectTerm.bind(this);
+    this.selectEdge = this.selectEdge.bind(this);
     this.selectEquation = this.selectEquation.bind(this);
   }
 
   selectTerm(term) {
     this.setState({
       selectedTerm: term,
+      selectedEdge: null,
+      useDynamicMathJax: false,
+    });
+  }
+
+  selectEdge(edge) {
+    this.setState({
+      selectedTerm: null,
+      selectedEdge: edge,
       useDynamicMathJax: false,
     });
   }
@@ -50,6 +60,7 @@ class App extends React.Component {
     this.setState({
       selectedEquationIndex: equationIndex,
       selectedTerm: null,
+      selectedEdge: null,
       useDynamicMathJax: true,
     });
   }
@@ -80,6 +91,8 @@ class App extends React.Component {
             <ComputationGraph
               sink={this.equations[this.state.selectedEquationIndex].sink}
               graph={this.equations[this.state.selectedEquationIndex].graph}
+              selectEdge={this.selectEdge}
+              selectedEdge={this.state.selectedEdge}
               selectedTerm={this.state.selectedTerm}
             />
           </Col>
@@ -90,6 +103,7 @@ class App extends React.Component {
               sink={this.equations[this.state.selectedEquationIndex].sink}
               graph={this.equations[this.state.selectedEquationIndex].graph}
               selectTerm={this.selectTerm}
+              selectedEdge={this.state.selectedEdge}
               selectedTerm={this.state.selectedTerm}
               useDynamicMathJax={this.state.useDynamicMathJax}
             />

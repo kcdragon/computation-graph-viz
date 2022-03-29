@@ -18,6 +18,10 @@ class ComputationGraph extends React.Component {
     height: 600,
   }
 
+  selectEdge = (edge) => () => {
+    this.props.selectEdge(edge);
+  }
+
   render() {
     const d = d3.dagStratify()(this.buildD3DagData(this.props.graph));
     const layout = d3
@@ -109,6 +113,14 @@ class ComputationGraph extends React.Component {
             }
           }
 
+          if (!!this.props.selectedEdge) {
+            const shouldHighlightEdge = link.source.id === this.props.selectedEdge.source && link.target.id === this.props.selectedEdge.target;
+            if (shouldHighlightEdge) {
+              linePathClassName = "computation-graph__edge--highlighted";
+              markerArrowRef = "marker-arrow-highlighted";
+            }
+          }
+
           return (
             <LinePath
               key={`${link.source.id}-${link.target.id}`}
@@ -116,10 +128,14 @@ class ComputationGraph extends React.Component {
               data={points}
               x={(d) => this.props.width - d.x}
               y={(d) => this.props.height - d.y}
-              strokeWidth={2}
+              strokeWidth={4}
               markerMid={"url(#" + markerArrowRef + ")"}
               markerEnd={"url(#" + markerArrowRef + ")"}
               className={linePathClassName}
+              onClick={this.selectEdge({
+                source: link.source.id,
+                target: link.target.id,
+              })}
             />);
         })}
       </>
