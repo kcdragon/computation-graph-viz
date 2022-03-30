@@ -1,9 +1,10 @@
 import {MathJax, MathJaxContext} from "better-react-mathjax";
 import React from 'react';
-import {Col, Container, FormCheck, Row} from "react-bootstrap";
+import {Button, Col, Container, FormCheck, Modal, Row} from "react-bootstrap";
 import Backpropagation from "./Backpropagation";
 import ComputationGraph from "./ComputationGraph";
 import { makeGraph } from "./Graph";
+import * as bootstrap from "bootstrap";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import FormCheckInput from "react-bootstrap/FormCheckInput";
@@ -40,6 +41,14 @@ class App extends React.Component {
     this.selectEquation = this.selectEquation.bind(this);
   }
 
+  componentDidMount() {
+    this.showAllPopups();
+  }
+
+  componentDidUpdate() {
+    this.showAllPopups();
+  }
+
   selectTerm(term) {
     this.setState({
       selectedTerm: term,
@@ -65,19 +74,82 @@ class App extends React.Component {
     });
   }
 
+  startTutorial = () => {
+    this.setState({
+      tutorialStageIndex: 0,
+      selectedEquationIndex: null,
+      selectedTerm: null,
+      selectedEdge: null,
+    });
+  }
+
+  nextTutorialStage = (currentTutorialStageIndex) => () => {
+    const nextTutorialStageIndex = currentTutorialStageIndex + 1;
+    console.log("next tutorial stage index", nextTutorialStageIndex)
+    this.setState({
+      tutorialStageIndex: nextTutorialStageIndex,
+    })
+  }
+
+  endTutorial = () => {
+    this.setState({
+      tutorialStageIndex: null,
+      selectedTerm: null,
+      selectedEdge: null,
+    });
+  }
+
+  showAllPopups() {
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl)
+    })
+    popoverList.forEach(popover => popover.show())
+  }
+
   render() {
     return (
       <Container>
+        <Row>
+          <Col>
+            <Button variant="primary" onClick={this.startTutorial}>
+              Tutorial
+            </Button>
+
+            <Modal show={this.state.tutorialStageIndex === 0} onHide={this.endTutorial}>
+              <Modal.Header closeButton>
+                <Modal.Title>Tutorial</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Welcome to the tutorial. Press "Next" to continue.</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={this.endTutorial}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={this.nextTutorialStage(this.state.tutorialStageIndex)}>
+                  Next
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </Col>
+        </Row>
         <Row>
           <Col md={3}>
             <h2>Equation</h2>
             <MathJaxContext>
               <MathJax>
                 {this.equations.map((equation, index) => {
+                  let equationDemoPopoverAttributes = {}
+                  if (index === 0 && this.state.tutorialStageIndex === 1) {
+                    equationDemoPopoverAttributes = {
+                      "data-bs-toggle": "popover",
+                      "data-bs-content": "Select this equation to display the corresponding computation graph and backpropagation equations.",
+                    }
+                  }
+
                   return (
                     <FormCheck key={index}>
                       <FormCheckInput type="radio" name={"equation-" + index} checked={this.state.selectedEquationIndex === index} onChange={() => { this.selectEquation(index) }}></FormCheckInput>
-                      <label htmlFor={"equation-" + index}>
+                      <label htmlFor={"equation-" + index} {...equationDemoPopoverAttributes}>
                         {equation.text}
                       </label>
                     </FormCheck>
@@ -88,25 +160,11 @@ class App extends React.Component {
           </Col>
           <Col md={5}>
             <h2>Computation Graph</h2>
-            <ComputationGraph
-              sink={this.equations[this.state.selectedEquationIndex].sink}
-              graph={this.equations[this.state.selectedEquationIndex].graph}
-              selectEdge={this.selectEdge}
-              selectedEdge={this.state.selectedEdge}
-              selectedTerm={this.state.selectedTerm}
-            />
+            {this.renderComputationGraph()}
           </Col>
           <Col md={4}>
             <h2>Backpropagation</h2>
-            <Backpropagation
-              function={this.equations[this.state.selectedEquationIndex].function}
-              sink={this.equations[this.state.selectedEquationIndex].sink}
-              graph={this.equations[this.state.selectedEquationIndex].graph}
-              selectTerm={this.selectTerm}
-              selectedEdge={this.state.selectedEdge}
-              selectedTerm={this.state.selectedTerm}
-              useDynamicMathJax={this.state.useDynamicMathJax}
-            />
+            {this.renderBackpropagation()}
           </Col>
         </Row>
         <Row>
@@ -114,6 +172,40 @@ class App extends React.Component {
         </Row>
       </Container>
     );
+  }
+
+  renderComputationGraph() {
+    if (this.state.selectedEquationIndex !== null) {
+      return (
+        <ComputationGraph
+          sink={this.equations[this.state.selectedEquationIndex].sink}
+          graph={this.equations[this.state.selectedEquationIndex].graph}
+          selectEdge={this.selectEdge}
+          selectedEdge={this.state.selectedEdge}
+          selectedTerm={this.state.selectedTerm}
+        />
+      );
+    } else {
+      return <span></span>
+    }
+  }
+
+  renderBackpropagation() {
+    if (this.state.selectedEquationIndex !== null) {
+      return (
+        <Backpropagation
+          function={this.equations[this.state.selectedEquationIndex].function}
+          sink={this.equations[this.state.selectedEquationIndex].sink}
+          graph={this.equations[this.state.selectedEquationIndex].graph}
+          selectTerm={this.selectTerm}
+          selectedEdge={this.state.selectedEdge}
+          selectedTerm={this.state.selectedTerm}
+          useDynamicMathJax={this.state.useDynamicMathJax}
+        />
+      );
+    } else {
+      return <span></span>
+    }
   }
 }
 export default App;
