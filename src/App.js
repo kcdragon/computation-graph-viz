@@ -1,20 +1,20 @@
 import {MathJax, MathJaxContext} from "better-react-mathjax";
+import {Steps} from 'intro.js-react';
 import React from 'react';
-import {Button, Col, Container, FormCheck, Modal, Row} from "react-bootstrap";
+import {Button, Col, Container, FormCheck, Row} from "react-bootstrap";
+import FormCheckInput from "react-bootstrap/FormCheckInput";
+
+import Article from "./Article";
 import Backpropagation from "./Backpropagation";
 import ComputationGraph from "./ComputationGraph";
-import { makeGraph } from "./Graph";
-import * as bootstrap from "bootstrap";
+import {makeGraph} from "./Graph";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import FormCheckInput from "react-bootstrap/FormCheckInput";
-import Article from "./Article";
+import 'intro.js/introjs.css';
 
 
 class App extends React.Component {
   constructor(props) {
-    console.log("App constructor called")
-
     super(props);
 
     let equationStrings = [
@@ -39,14 +39,6 @@ class App extends React.Component {
     this.selectTerm = this.selectTerm.bind(this);
     this.selectEdge = this.selectEdge.bind(this);
     this.selectEquation = this.selectEquation.bind(this);
-  }
-
-  componentDidMount() {
-    this.showAllPopups();
-  }
-
-  componentDidUpdate() {
-    this.showAllPopups();
   }
 
   selectTerm(term) {
@@ -76,37 +68,32 @@ class App extends React.Component {
 
   startTutorial = () => {
     this.setState({
-      tutorialStageIndex: 0,
+      tutorialEnabled: true,
       selectedTerm: null,
       selectedEdge: null,
     });
-  }
-
-  nextTutorialStage = (currentTutorialStageIndex) => () => {
-    const nextTutorialStageIndex = currentTutorialStageIndex + 1;
-    console.log("next tutorial stage index", nextTutorialStageIndex)
-    this.setState({
-      tutorialStageIndex: nextTutorialStageIndex,
-    })
   }
 
   endTutorial = () => {
     this.setState({
-      tutorialStageIndex: null,
+      tutorialEnabled: false,
       selectedTerm: null,
       selectedEdge: null,
     });
   }
 
-  showAllPopups() {
-    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-    const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-      return new bootstrap.Popover(popoverTriggerEl)
-    })
-    popoverList.forEach(popover => popover.show())
-  }
-
   render() {
+    const steps = [
+      {
+        element: '.tutorial-equation-selector',
+        intro: 'Select an equation to display the corresponding computation graph and backpropagation equations.',
+      },
+      {
+        element: '.tutorial-computation-graph',
+        intro: 'This section displays the computation graph based on the selected equation.',
+      },
+    ];
+
     return (
       <Container>
         <Row>
@@ -115,29 +102,25 @@ class App extends React.Component {
               Tutorial
             </Button>
 
-            <Modal show={this.state.tutorialStageIndex === 0} onHide={this.endTutorial}>
-              <Modal.Header closeButton>
-                <Modal.Title>Tutorial</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>Welcome to the tutorial. Press "Next" to continue.</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={this.endTutorial}>
-                  Close
-                </Button>
-                <Button variant="primary" onClick={this.nextTutorialStage(this.state.tutorialStageIndex)}>
-                  Next
-                </Button>
-              </Modal.Footer>
-            </Modal>
+            <Steps
+              enabled={this.state.tutorialEnabled}
+              steps={steps}
+              initialStep={0}
+              onExit={this.endTutorial}
+            />
           </Col>
         </Row>
         <Row>
           <Col md={3}>
-            {this.renderEquationSelector()}
+            <div className="tutorial-equation-selector">
+              {this.renderEquationSelector()}
+            </div>
           </Col>
           <Col md={5}>
-            <h2>Computation Graph</h2>
-            {this.renderComputationGraph()}
+            <div className="tutorial-computation-graph">
+              <h2>Computation Graph</h2>
+              {this.renderComputationGraph()}
+            </div>
           </Col>
           <Col md={4}>
             <h2>Backpropagation</h2>
@@ -152,20 +135,9 @@ class App extends React.Component {
   }
 
   renderEquationSelector() {
-    const equationDemoPopoverAttributes = {
-      "data-bs-toggle": "popover",
-      "data-bs-html": "true",
-      "data-bs-content": "Select an equation to display the corresponding computation graph and backpropagation equations.",
-    }
-
-    let header = <h2>Equation</h2>;
-    if (this.state.tutorialStageIndex === 1) {
-      header = <h2 {...equationDemoPopoverAttributes}>Equation</h2>;
-    }
-
     return (
       <>
-        {header}
+        <h2>Equation</h2>
         <MathJaxContext>
           <MathJax>
             {this.equations.map((equation, index) => {
