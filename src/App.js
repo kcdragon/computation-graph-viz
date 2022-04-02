@@ -77,7 +77,6 @@ class App extends React.Component {
   startTutorial = () => {
     this.setState({
       tutorialStageIndex: 0,
-      selectedEquationIndex: null,
       selectedTerm: null,
       selectedEdge: null,
     });
@@ -134,29 +133,7 @@ class App extends React.Component {
         </Row>
         <Row>
           <Col md={3}>
-            <h2>Equation</h2>
-            <MathJaxContext>
-              <MathJax>
-                {this.equations.map((equation, index) => {
-                  let equationDemoPopoverAttributes = {}
-                  if (index === 0 && this.state.tutorialStageIndex === 1) {
-                    equationDemoPopoverAttributes = {
-                      "data-bs-toggle": "popover",
-                      "data-bs-content": "Select this equation to display the corresponding computation graph and backpropagation equations.",
-                    }
-                  }
-
-                  return (
-                    <FormCheck key={index}>
-                      <FormCheckInput type="radio" name={"equation-" + index} checked={this.state.selectedEquationIndex === index} onChange={() => { this.selectEquation(index) }}></FormCheckInput>
-                      <label htmlFor={"equation-" + index} {...equationDemoPopoverAttributes}>
-                        {equation.text}
-                      </label>
-                    </FormCheck>
-                  );
-                })}
-              </MathJax>
-            </MathJaxContext>
+            {this.renderEquationSelector()}
           </Col>
           <Col md={5}>
             <h2>Computation Graph</h2>
@@ -172,6 +149,39 @@ class App extends React.Component {
         </Row>
       </Container>
     );
+  }
+
+  renderEquationSelector() {
+    const equationDemoPopoverAttributes = {
+      "data-bs-toggle": "popover",
+      "data-bs-html": "true",
+      "data-bs-content": "Select an equation to display the corresponding computation graph and backpropagation equations.",
+    }
+
+    let header = <h2>Equation</h2>;
+    if (this.state.tutorialStageIndex === 1) {
+      header = <h2 {...equationDemoPopoverAttributes}>Equation</h2>;
+    }
+
+    return (
+      <>
+        {header}
+        <MathJaxContext>
+          <MathJax>
+            {this.equations.map((equation, index) => {
+              return (
+                <FormCheck key={index}>
+                  <FormCheckInput type="radio" name={"equation-" + index} checked={this.state.selectedEquationIndex === index} onChange={() => { this.selectEquation(index) }}></FormCheckInput>
+                  <label htmlFor={"equation-" + index}>
+                    {equation.text}
+                  </label>
+                </FormCheck>
+              );
+            })}
+          </MathJax>
+        </MathJaxContext>
+      </>
+    )
   }
 
   renderComputationGraph() {
