@@ -7,12 +7,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.scss'
 
 class Backpropagation extends React.Component {
-  constructor(props) {
-    console.log("Backpropagation constructor called")
-
-    super(props);
-  }
-
   render() {
     const backpropEquations = []
     const derivativesOfFunction = {}
@@ -103,8 +97,6 @@ class Backpropagation extends React.Component {
       node = needToVisit.shift();
     }
 
-    console.log("finished building backpropEquations")
-
     return (
       <Container>
         <Row>
@@ -114,7 +106,7 @@ class Backpropagation extends React.Component {
                 {backpropEquations.map((terms, index) => {
                   return (
                     <div key={index}>
-                      {this.renderBackpropEquation(terms)}
+                      {this.renderBackpropEquation(terms, index === 0)}
                     </div>
                   );
                 })}
@@ -126,13 +118,20 @@ class Backpropagation extends React.Component {
     );
   }
 
-  renderBackpropEquation(terms) {
+  renderBackpropEquation(terms, isFirstEquation) {
     return terms.map((term, index) => {
       if (term.isDerivative) {
+        let className = "";
+        if (isFirstEquation && index === 0) {
+          className = "tutorial-backpropagation-partial-derivative";
+        }
+
         return (
-          <HighlightableTerm key={index} term={term} selectedTerm={this.props.selectedTerm} selectedEdge={this.props.selectedEdge} selectTerm={this.props.selectTerm}>
-            {"\\(" + term.text + "\\)"}
-          </HighlightableTerm>
+          <span className={className}>
+            <HighlightableTerm key={index} term={term} selectedTerm={this.props.selectedTerm} selectedEdge={this.props.selectedEdge} selectTerm={this.props.selectTerm}>
+              {"\\(" + term.text + "\\)"}
+            </HighlightableTerm>
+          </span>
         );
       } else {
         return (

@@ -1,7 +1,7 @@
 import {MathJax, MathJaxContext} from "better-react-mathjax";
 import {Steps} from 'intro.js-react';
 import React from 'react';
-import {Button, Col, Container, FormCheck, Row} from "react-bootstrap";
+import {Col, Container, FormCheck, Nav, Navbar, NavbarBrand, NavItem, NavLink, Row} from "react-bootstrap";
 import FormCheckInput from "react-bootstrap/FormCheckInput";
 
 import Article from "./Article";
@@ -86,21 +86,41 @@ class App extends React.Component {
     const steps = [
       {
         element: '.tutorial-equation-selector',
-        intro: 'Select an equation to display the corresponding computation graph and backpropagation equations.',
+        intro: 'The Equation section allows you to select an equation that will be used to display the computation graph and derive the backpropagation equations.',
       },
       {
         element: '.tutorial-computation-graph',
-        intro: 'This section displays the computation graph based on the selected equation.',
+        intro: 'The Computation Graph section displays the computation graph based on the selected equation.',
+      },
+      {
+        element: '.tutorial-backpropagation',
+        intro: 'The Backpropagation section displays the backpropagation equations that are derived from calculating the partial derivatives of the selected equation.',
+      },
+      {
+        element: '.tutorial-backpropagation-partial-derivative',
+        intro: 'If you click on a partial derivative term, it will highlight where that term is used in other backpropagation equations and the edges in the graph that are involved in calculating that derivative.',
+      },
+      {
+        element: '.tutorial-article',
+        intro: "This article gives background on computation graphs and the backpropagation equations. It's suggested to read this before using the visualization if these concepts are unfamiliar to you.",
+        position: "left",
       },
     ];
 
     return (
-      <Container>
+      <Container fluid>
         <Row>
           <Col>
-            <Button variant="primary" onClick={this.startTutorial}>
-              Tutorial
-            </Button>
+            <Navbar bg="light">
+              <Nav>
+                <NavbarBrand>
+                  Computation Graph Viz
+                </NavbarBrand>
+                <NavItem>
+                  <NavLink onClick={this.startTutorial}>Tutorial</NavLink>
+                </NavItem>
+              </Nav>
+            </Navbar>
 
             <Steps
               enabled={this.state.tutorialEnabled}
@@ -123,12 +143,20 @@ class App extends React.Component {
             </div>
           </Col>
           <Col md={4}>
-            <h2>Backpropagation</h2>
-            {this.renderBackpropagation()}
+            <div className="tutorial-backpropagation">
+              <h2>Backpropagation</h2>
+              {this.renderBackpropagation()}
+            </div>
           </Col>
         </Row>
         <Row>
-          <Article />
+          <Col md={3} />
+          <Col md={6}>
+            <div className="tutorial-article">
+              <Article />
+            </div>
+          </Col>
+          <Col md={3} />
         </Row>
       </Container>
     );
