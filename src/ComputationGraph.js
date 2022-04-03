@@ -85,7 +85,7 @@ class ComputationGraph extends React.Component {
   renderEdges(dag, edgesInvolvedInDerivative) {
     return (
       <>
-        {dag.links().map((link) => {
+        {dag.links().map((link, index) => {
           let points = link.points
           if (points.length === 2) {
             const start = points[0];
@@ -121,6 +121,12 @@ class ComputationGraph extends React.Component {
             }
           }
 
+          let tutorialClassName = "";
+          const useEdgeInTutorial = index === 0;
+          if (useEdgeInTutorial) {
+            tutorialClassName = "tutorial-computation-graph-edge";
+          }
+
           return (
             <LinePath
               key={`${link.source.id}-${link.target.id}`}
@@ -131,7 +137,7 @@ class ComputationGraph extends React.Component {
               strokeWidth={4}
               markerMid={"url(#" + markerArrowRef + ")"}
               markerEnd={"url(#" + markerArrowRef + ")"}
-              className={linePathClassName}
+              className={`${linePathClassName} ${tutorialClassName}`}
               onClick={this.selectEdge({
                 source: link.source.id,
                 target: link.target.id,

@@ -93,6 +93,10 @@ class App extends React.Component {
         intro: 'The Computation Graph section displays the computation graph based on the selected equation.',
       },
       {
+        element: '.tutorial-computation-graph-edge',
+        intro: 'If you click on an edge in the graph, the partial derivative that the edge represents will be highlighted in the backpropagation equations.',
+      },
+      {
         element: '.tutorial-backpropagation',
         intro: 'The Backpropagation section displays the backpropagation equations that are derived from calculating the partial derivatives of the selected equation.',
       },
