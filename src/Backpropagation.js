@@ -127,8 +127,8 @@ class Backpropagation extends React.Component {
         }
 
         return (
-          <span className={className}>
-            <HighlightableTerm key={index} term={term} selectedTerm={this.props.selectedTerm} selectedEdge={this.props.selectedEdge} selectTerm={this.props.selectTerm}>
+          <span className={className} key={index}>
+            <HighlightableTerm term={term} selectedTerm={this.props.selectedTerm} selectedEdge={this.props.selectedEdge} selectTerm={this.props.selectTerm}>
               {"\\(" + term.text + "\\)"}
             </HighlightableTerm>
           </span>
