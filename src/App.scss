@@ -1,8 +1,9 @@
 $highlight-color: #01FF70;
+$hover-color: lightgray;
 
 .highlightable-term {
     &:hover {
-        background-color: lightgray;
+        background-color: $hover-color;
     }
 
     &--highlighted {
@@ -13,6 +14,10 @@ $highlight-color: #01FF70;
 .computation-graph {
     &__edge {
         stroke: black;
+
+        &:hover {
+            stroke: $hover-color;
+        }
 
         &--highlighted {
             stroke: $highlight-color;
