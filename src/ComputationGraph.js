@@ -70,10 +70,8 @@ class ComputationGraph extends React.Component {
     const renderedNodes = this.renderNodes(dag);
 
     return (
-      <svg className="computation-graph" width={this.props.width} height={this.props.height}>
+      <svg className="computation-graph" pointerEvents="bounding-box" width={this.props.width} height={this.props.height}>
         <rect width={this.props.width} height={this.props.height} fill="#FFF"/>
-        <MarkerArrow id="marker-arrow" fill="#333" size={6}/>
-        <MarkerArrow id="marker-arrow-highlighted" fill="#01FF70" size={6}/>
         <Group top={0} left={0}>
           {renderedEdges}
           {renderedNodes}
@@ -104,12 +102,12 @@ class ComputationGraph extends React.Component {
           }
 
           let linePathClassName = "computation-graph__edge";
-          let markerArrowRef = "marker-arrow"
+          let markerArrowRef = `marker-arrow-${link.source.id}-${link.target.id}`;
           if (!!this.props.selectedTerm) {
             const shouldHighlightEdge = Array.from(edgesInvolvedInDerivative).some(edge => edge[0] === link.target.id && edge[1] === link.source.id);
             if (shouldHighlightEdge) {
               linePathClassName = "computation-graph__edge--highlighted";
-              markerArrowRef = "marker-arrow-highlighted"
+              markerArrowRef = `marker-arrow-highlighted-${link.source.id}-${link.target.id}`;
             }
           }
 
@@ -117,7 +115,7 @@ class ComputationGraph extends React.Component {
             const shouldHighlightEdge = link.source.id === this.props.selectedEdge.source && link.target.id === this.props.selectedEdge.target;
             if (shouldHighlightEdge) {
               linePathClassName = "computation-graph__edge--highlighted";
-              markerArrowRef = "marker-arrow-highlighted";
+              markerArrowRef = `marker-arrow-highlighted-${link.source.id}-${link.target.id}`;
             }
           }
 
@@ -127,22 +125,38 @@ class ComputationGraph extends React.Component {
             tutorialClassName = "tutorial-computation-graph-edge";
           }
 
+          const onClick = this.selectEdge({
+            source: link.source.id,
+            target: link.target.id,
+          })
+
           return (
-            <LinePath
-              key={`${link.source.id}-${link.target.id}`}
-              curve={curveCatmullRom}
-              data={points}
-              x={(d) => this.props.width - d.x}
-              y={(d) => this.props.height - d.y}
-              strokeWidth={4}
-              markerMid={"url(#" + markerArrowRef + ")"}
-              markerEnd={"url(#" + markerArrowRef + ")"}
-              className={`${linePathClassName} ${tutorialClassName}`}
-              onClick={this.selectEdge({
-                source: link.source.id,
-                target: link.target.id,
-              })}
-            />);
+            <Group key={`${link.source.id}-${link.target.id}`}>
+              <MarkerArrow
+                id={`marker-arrow-${link.source.id}-${link.target.id}`}
+                fill="#333"
+                size={6}
+                onClick={onClick}
+              />
+              <MarkerArrow
+                id={`marker-arrow-highlighted-${link.source.id}-${link.target.id}`}
+                fill="#01FF70"
+                size={6}
+                onClick={onClick}
+              />
+              <LinePath
+                curve={curveCatmullRom}
+                data={points}
+                x={(d) => this.props.width - d.x}
+                y={(d) => this.props.height - d.y}
+                strokeWidth={4}
+                markerMid={"url(#" + markerArrowRef + ")"}
+                markerEnd={"url(#" + markerArrowRef + ")"}
+                className={`${linePathClassName} ${tutorialClassName}`}
+                onClick={onClick}
+              />
+            </Group>
+          );
         })}
       </>
     );
@@ -168,7 +182,7 @@ class ComputationGraph extends React.Component {
                 x={this.props.width - d.x - 50}
                 y={this.props.height - d.y - 15}
                 width="100"
-                height="100">
+                height="50">
                 <div style={{textAlign: "center"}}>
                   <MathJax dynamic>{"\\( " + label + " \\)"}</MathJax>
                 </div>
