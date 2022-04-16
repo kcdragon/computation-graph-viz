@@ -21,24 +21,29 @@ class App extends React.Component {
       "x_1 x_2 + sin(x_2)",
       "w_1 * x_1 + w_2 * x_2"
     ];
-    this.equations = equationStrings.map(equation => {
-      const { graph, sink } = makeGraph(equation);
-      return {
-        text: "\\( f = " + equation + " \\)",
-        function: equation,
-        graph,
-        sink,
-      }
+    const equations = equationStrings.map(equationString => {
+      return this.makeEquation(equationString);
     });
 
     this.state = {
       selectedTerm: null,
       selectedEquationIndex: 0,
+      equations,
     };
 
     this.selectTerm = this.selectTerm.bind(this);
     this.selectEdge = this.selectEdge.bind(this);
     this.selectEquation = this.selectEquation.bind(this);
+  }
+
+  makeEquation(equationString) {
+    const { graph, sink } = makeGraph(equationString);
+    return {
+      text: "\\( f = " + equationString + " \\)",
+      function: equationString,
+      graph,
+      sink,
+    }
   }
 
   selectTerm(term) {
@@ -80,6 +85,20 @@ class App extends React.Component {
       selectedTerm: null,
       selectedEdge: null,
     });
+  }
+
+  addEquation = (customEquationTextRef) => {
+    const equationString = customEquationTextRef.current.value;
+    const equation = this.makeEquation(equationString);
+
+    const equations = this.state.equations;
+    equations.push(equation);
+    this.setState({
+      equations: equations,
+      useDynamicMathJax: true,
+    });
+
+    customEquationTextRef.current.value = "";
   }
 
   render() {
@@ -167,23 +186,36 @@ class App extends React.Component {
   }
 
   renderEquationSelector() {
+    const customEquationTextRef = React.createRef();
+
     return (
       <>
         <h2>Equation</h2>
-        <MathJaxContext>
-          <MathJax>
-            {this.equations.map((equation, index) => {
-              return (
-                <FormCheck key={index}>
-                  <FormCheckInput type="radio" name={"equation-" + index} checked={this.state.selectedEquationIndex === index} onChange={() => { this.selectEquation(index) }}></FormCheckInput>
-                  <label htmlFor={"equation-" + index}>
-                    {equation.text}
-                  </label>
-                </FormCheck>
-              );
-            })}
-          </MathJax>
-        </MathJaxContext>
+        <Row>
+          <MathJaxContext>
+            <MathJax dynamic={this.state.useDynamicMathJax}>
+              {this.state.equations.map((equation, index) => {
+                return (
+                  <FormCheck key={index}>
+                    <FormCheckInput type="radio" name={"equation-" + index}
+                                    checked={this.state.selectedEquationIndex === index} onChange={() => {
+                      this.selectEquation(index)
+                    }}></FormCheckInput>
+                    <label htmlFor={"equation-" + index}>
+                      {equation.text}
+                    </label>
+                  </FormCheck>
+                );
+              })}
+            </MathJax>
+          </MathJaxContext>
+        </Row>
+
+        <Row>
+          <h4>Add your own equation</h4>
+          <textarea type="text" ref={customEquationTextRef} />
+          <input type="submit" value="Submit" onClick={() => this.addEquation(customEquationTextRef)} />
+        </Row>
       </>
     )
   }
@@ -192,8 +224,8 @@ class App extends React.Component {
     if (this.state.selectedEquationIndex !== null) {
       return (
         <ComputationGraph
-          sink={this.equations[this.state.selectedEquationIndex].sink}
-          graph={this.equations[this.state.selectedEquationIndex].graph}
+          sink={this.state.equations[this.state.selectedEquationIndex].sink}
+          graph={this.state.equations[this.state.selectedEquationIndex].graph}
           selectEdge={this.selectEdge}
           selectedEdge={this.state.selectedEdge}
           selectedTerm={this.state.selectedTerm}
@@ -208,9 +240,9 @@ class App extends React.Component {
     if (this.state.selectedEquationIndex !== null) {
       return (
         <Backpropagation
-          function={this.equations[this.state.selectedEquationIndex].function}
-          sink={this.equations[this.state.selectedEquationIndex].sink}
-          graph={this.equations[this.state.selectedEquationIndex].graph}
+          function={this.state.equations[this.state.selectedEquationIndex].function}
+          sink={this.state.equations[this.state.selectedEquationIndex].sink}
+          graph={this.state.equations[this.state.selectedEquationIndex].graph}
           selectTerm={this.selectTerm}
           selectedEdge={this.state.selectedEdge}
           selectedTerm={this.state.selectedTerm}
