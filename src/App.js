@@ -1,12 +1,8 @@
-import {MathJax, MathJaxContext} from "better-react-mathjax";
 import {Steps} from 'intro.js-react';
 import React from 'react';
 import {
-  Button,
   Col,
   Container,
-  Form,
-  FormCheck,
   Nav,
   Navbar,
   NavbarBrand,
@@ -14,11 +10,11 @@ import {
   NavLink,
   Row
 } from "react-bootstrap";
-import FormCheckInput from "react-bootstrap/FormCheckInput";
 
 import Article from "./Article";
 import Backpropagation from "./Backpropagation";
 import ComputationGraph from "./ComputationGraph";
+import EquationSelector from "./EquationSelector";
 import {makeGraph} from "./Graph";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -172,6 +168,7 @@ class App extends React.Component {
         <Row>
           <Col md={3}>
             <div className="tutorial-equation-selector">
+              <h2>Equation</h2>
               {this.renderEquationSelector()}
             </div>
           </Col>
@@ -202,47 +199,14 @@ class App extends React.Component {
   }
 
   renderEquationSelector() {
-    const customEquationTextRef = React.createRef();
-
     return (
-      <>
-        <h2>Equation</h2>
-        <Row>
-          <MathJaxContext>
-            <MathJax dynamic={this.state.useDynamicMathJax}>
-              {this.state.equations.map((equation, index) => {
-                return (
-                  <FormCheck key={index}>
-                    <FormCheckInput type="radio" name={"equation-" + index}
-                                    checked={this.state.selectedEquationIndex === index} onChange={() => {
-                      this.selectEquation(index)
-                    }}></FormCheckInput>
-                    <label htmlFor={"equation-" + index}>
-                      {equation.text}
-                    </label>
-                  </FormCheck>
-                );
-              })}
-            </MathJax>
-          </MathJaxContext>
-        </Row>
-
-        <Row className="tutorial-equation-selector-custom">
-          <h4>Add your own equation</h4>
-          <Form>
-            <Row>
-              <Col>
-                <textarea className="form-control" type="text" ref={customEquationTextRef} />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Button primary onClick={() => this.addEquation(customEquationTextRef)}>Add</Button>
-              </Col>
-            </Row>
-          </Form>
-        </Row>
-      </>
+      <EquationSelector
+        equations={this.state.equations}
+        selectedEquationIndex={this.state.selectedEquationIndex}
+        selectEquation={this.selectEquation}
+        addEquation={this.addEquation}
+        useDynamicMathJax={this.state.useDynamicMathJax}
+      />
     )
   }
 
