@@ -1,7 +1,19 @@
 import {MathJax, MathJaxContext} from "better-react-mathjax";
 import {Steps} from 'intro.js-react';
 import React from 'react';
-import {Col, Container, FormCheck, Nav, Navbar, NavbarBrand, NavItem, NavLink, Row} from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  FormCheck,
+  Nav,
+  Navbar,
+  NavbarBrand,
+  NavItem,
+  NavLink,
+  Row
+} from "react-bootstrap";
 import FormCheckInput from "react-bootstrap/FormCheckInput";
 
 import Article from "./Article";
@@ -108,6 +120,10 @@ class App extends React.Component {
         intro: 'The Equation section allows you to select an equation that will be used to display the computation graph and derive the backpropagation equations.',
       },
       {
+        element: '.tutorial-equation-selector-custom',
+        intro: 'You can add your own equation to the list and select it.',
+      },
+      {
         element: '.tutorial-computation-graph',
         intro: 'The Computation Graph section displays the computation graph based on the selected equation.',
       },
@@ -211,10 +227,20 @@ class App extends React.Component {
           </MathJaxContext>
         </Row>
 
-        <Row>
+        <Row className="tutorial-equation-selector-custom">
           <h4>Add your own equation</h4>
-          <textarea type="text" ref={customEquationTextRef} />
-          <input type="submit" value="Submit" onClick={() => this.addEquation(customEquationTextRef)} />
+          <Form>
+            <Row>
+              <Col>
+                <textarea className="form-control" type="text" ref={customEquationTextRef} />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Button primary onClick={() => this.addEquation(customEquationTextRef)}>Add</Button>
+              </Col>
+            </Row>
+          </Form>
         </Row>
       </>
     )
