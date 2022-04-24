@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Col,
   Container,
+  Modal,
   Nav,
   Navbar,
   NavbarBrand,
@@ -36,6 +37,7 @@ class App extends React.Component {
     this.state = {
       selectedTerm: null,
       selectedEquationIndex: 0,
+      showFeedbackModal: false,
       equations,
     };
 
@@ -154,6 +156,9 @@ class App extends React.Component {
                 <NavItem>
                   <NavLink onClick={this.startTutorial}>Tutorial</NavLink>
                 </NavItem>
+                <NavItem>
+                  <NavLink onClick={() => this.setState({ showFeedbackModal: true })}>Feedback</NavLink>
+                </NavItem>
               </Nav>
             </Navbar>
 
@@ -163,6 +168,18 @@ class App extends React.Component {
               initialStep={0}
               onExit={this.endTutorial}
             />
+
+            <Modal
+              show={this.state.showFeedbackModal}
+              onHide={() => this.setState({ showFeedbackModal: false })}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Feedback</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                Thanks for using Computation Graph Viz! You can propose a new feature or report a bug by <a href="https://github.com/kcdragon/computation-graph-viz/issues/new" target="_blank">opening an issue</a> in the Github project.
+              </Modal.Body>
+            </Modal>
           </Col>
         </Row>
         <Row>
