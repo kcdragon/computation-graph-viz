@@ -59,6 +59,18 @@ class Article extends React.Component {
         <ul>
           <li><a href="https://colah.github.io/posts/2015-08-Backprop/">Calculus on Computational Graphs: Backpropagation</a> by Christopher Olah</li>
         </ul>
+
+        <h3>
+          Credits
+        </h3>
+        <p>
+          I'd like the following people for their help on this project.
+        </p>
+        <ul>
+          <li>My fellow students in the Spring 2022 Education Technology class for reviewing and providing feedback.</li>
+          <li>My mentor Filipe for reviewing and providing feedback.</li>
+          <li>The course creator and instructor Dr. Joyner.</li>
+        </ul>
       </div>
     );
   }
