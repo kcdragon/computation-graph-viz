@@ -44,6 +44,8 @@ class App extends React.Component {
     this.selectTerm = this.selectTerm.bind(this);
     this.selectEdge = this.selectEdge.bind(this);
     this.selectEquation = this.selectEquation.bind(this);
+
+    this.articleRef = React.createRef();
   }
 
   makeEquation(equationString) {
@@ -111,6 +113,13 @@ class App extends React.Component {
     customEquationTextRef.current.value = "";
   }
 
+  scrollToArticle = () => {
+    this.articleRef.current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }
+
   render() {
     const steps = [
       {
@@ -155,6 +164,9 @@ class App extends React.Component {
                 </NavbarBrand>
                 <NavItem>
                   <NavLink onClick={this.startTutorial}>Tutorial</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink onClick={this.scrollToArticle}>Article</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={() => this.setState({ showFeedbackModal: true })}>Feedback</NavLink>
@@ -205,7 +217,7 @@ class App extends React.Component {
         <Row>
           <Col md={3} />
           <Col md={6}>
-            <div className="tutorial-article">
+            <div ref={this.articleRef} className="tutorial-article">
               <Article />
             </div>
           </Col>
