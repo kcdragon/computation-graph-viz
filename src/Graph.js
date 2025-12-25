@@ -96,7 +96,7 @@ export function makeGraph(equationString) {
 
         break
       default:
-        throw "UNSUPPORTED NODE TYPE: " + node.type;
+        throw new Error("UNSUPPORTED NODE TYPE: " + node.type);
     }
   })
 
@@ -126,16 +126,16 @@ function addOperatorNodeToGraph(graph, nodeName, parentNodeName, operation) {
   if (parentNodeName !== null) {
     graph[nodeName].children.push(parentNodeName)
     graph[parentNodeName].parents.push(nodeName)
-    if (graph[parentNodeName].parents.length == 2) {
+    if (graph[parentNodeName].parents.length === 2) {
       graph[parentNodeName].equation = graph[parentNodeName].parents.join(" " + graph[parentNodeName].operator + " ")
     }
   }
 }
 
 function equationForGraphNode(graphNode) {
-  if (graphNode.parents.length == 1) {
+  if (graphNode.parents.length === 1) {
     return graphNode.operator + "(" + graphNode.parents[0] + ")";
-  } else if (graphNode.parents.length == 2) {
+  } else if (graphNode.parents.length === 2) {
     return graphNode.parents.join(" " + graphNode.operator + " ")
   }
 }

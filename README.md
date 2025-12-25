@@ -15,9 +15,4 @@ npm test
 
 ## Deploy
 
-Use Github Personal Access Token as password.
-
-```shell
-rm -rf node_modules/.cache/gh-pages
-npm run deploy
-```
+Pushing to main will automatically deploy to Cloudflare Pages.

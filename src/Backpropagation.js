@@ -17,13 +17,14 @@ class Backpropagation extends React.Component {
     while (node != null) {
       visited.add(node);
 
+      const currentNode = node; // Capture node value for use in map functions
       const derivativeOfFWithRespectToNodeTerm = {
-        text: this.constructLatexFormattedDerivativeString("f", node),
+        text: this.constructLatexFormattedDerivativeString("f", currentNode),
         isDerivative: true,
         derivativeFunction: "f",
-        derivativeVariable: node,
+        derivativeVariable: currentNode,
       };
-      const children = this.props.graph[node].children;
+      const children = this.props.graph[currentNode].children;
 
       let equalsTerm = {
         text: "=",
@@ -44,7 +45,7 @@ class Backpropagation extends React.Component {
       terms.push(equalsTerm);
 
       if (children.length === 0) {
-        derivativesOfFunction[node] = 1;
+        derivativesOfFunction[currentNode] = 1;
         terms.push({
           text: "1",
           isDerivative: false,
@@ -60,10 +61,10 @@ class Backpropagation extends React.Component {
           };
 
           let derivativeOfChildWithRespectToNodeTerm = {
-            text: this.constructLatexFormattedDerivativeString(child, node),
+            text: this.constructLatexFormattedDerivativeString(child, currentNode),
             isDerivative: true,
             derivativeFunction: child,
-            derivativeVariable: node,
+            derivativeVariable: currentNode,
           };
 
           return [derivativeOfFWithRespectToChildTerm, multiplicationTerm, derivativeOfChildWithRespectToNodeTerm, additionTerm];
@@ -73,7 +74,7 @@ class Backpropagation extends React.Component {
         terms.push(equalsTerm);
 
         const derivativeEquation = children.map(child => {
-          return derivativesOfFunction[child] + "*" + mathjs.derivative(this.props.graph[child].equation, node).toString();
+          return derivativesOfFunction[child] + "*" + mathjs.derivative(this.props.graph[child].equation, currentNode).toString();
         }).join("+");
 
         terms.push({
@@ -87,12 +88,12 @@ class Backpropagation extends React.Component {
           text: simplifiedDerivativeEquation,
           isDerivative: false,
         });
-        derivativesOfFunction[node] = simplifiedDerivativeEquation;
+        derivativesOfFunction[currentNode] = simplifiedDerivativeEquation;
       }
 
       backpropEquations.push(terms);
 
-      let newNodesToExplore = this.props.graph[node].parents.filter(n => !visited.has(n) && !needToVisit.includes(n));
+      let newNodesToExplore = this.props.graph[currentNode].parents.filter(n => !visited.has(n) && !needToVisit.includes(n));
       needToVisit.push(...newNodesToExplore);
       node = needToVisit.shift();
     }
@@ -164,7 +165,7 @@ class HighlightableTerm extends React.Component {
 
     let shouldHighlight = selectedTerm && selectedTerm.text === term.text;
     if (!!selectedEdge) {
-      shouldHighlight = shouldHighlight || term.derivativeFunction === selectedEdge.target && term.derivativeVariable === selectedEdge.source;
+      shouldHighlight = shouldHighlight || (term.derivativeFunction === selectedEdge.target && term.derivativeVariable === selectedEdge.source);
     }
 
     let className = "highlightable-term";

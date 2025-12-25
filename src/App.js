@@ -189,7 +189,7 @@ class App extends React.Component {
                 <Modal.Title>Feedback</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                Thanks for using Computation Graph Viz! You can propose a new feature or report a bug by <a href="https://github.com/kcdragon/computation-graph-viz/issues/new" target="_blank">opening an issue</a> in the Github project.
+                Thanks for using Computation Graph Viz! You can propose a new feature or report a bug by <a href="https://github.com/kcdragon/computation-graph-viz/issues/new" target="_blank" rel="noreferrer">opening an issue</a> in the Github project.
               </Modal.Body>
             </Modal>
           </Col>
