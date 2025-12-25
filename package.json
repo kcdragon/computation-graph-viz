@@ -22,7 +22,8 @@
     "react-lorem-ipsum": "^1.4.10",
     "react-scripts": "5.0.0",
     "sass": "^1.49.9",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "wrangler": "^4.54.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -30,7 +31,7 @@
     "test": "react-scripts test --no-watchman",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "npx wrangler deploy"
+    "deploy": "npx wrangler deploy src/index.js"
   },
   "eslintConfig": {
     "extends": [
