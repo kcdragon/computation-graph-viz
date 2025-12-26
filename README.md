@@ -1,9 +1,10 @@
 # Computation Graph Viz
 
-Computation Graph Viz is a visualization for computation graphs and backpropagation.
+[Computation Graph Viz](https://computation-graph-viz.pages.dev) is a visualization for computation graphs and backpropagation.
 It was my final project for the Education Technology class in [Georgia Tech's Online Master of Science in Computer Science program](https://omscs.gatech.edu/).
 The project is built with React, D3, Math.js and MathJax.
 The source code is available on [GitHub](https://github.com/kcdragon/computation-graph-viz).
+You can try it out [here](https://computation-graph-viz.pages.dev).
 
 ## Quickstart
 
