@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PORT="${CONDUCTOR_PORT:-3000}" BROWSER=none GENERATE_SOURCEMAP=false npm start
